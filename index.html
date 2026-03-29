@@ -48,6 +48,17 @@
             font-weight: 700;
             letter-spacing: -0.5px;
         }
+        .verified-badge {
+            display: inline-block;
+            background: #38a169;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
         .header .subtitle {
             font-size: 0.85rem;
             opacity: 0.85;
@@ -284,7 +295,7 @@
     <!-- Header -->
     <div class="header">
         <div>
-            <h1>🏢 VA-7 Apartment Dashboard</h1>
+            <h1>🏢 VA-7 Apartment Dashboard <span class="verified-badge">✓ Verified</span></h1>
             <div class="subtitle">Campaign Canvassing Tool — New Virginia 7th District</div>
         </div>
         <div class="header-stats">
@@ -363,6 +374,7 @@
                             <th data-sort="community_room">Comm. Room</th>
                             <th data-sort="status">Status <span class="sort-arrow">⇕</span></th>
                             <th>Notes</th>
+                            <th>Source</th>
                         </tr>
                     </thead>
                     <tbody id="apt-table-body"></tbody>
@@ -632,6 +644,8 @@
                 <div class="popup-detail"><strong>Community Room:</strong> ${apt.community_room || 'Unknown'}</div>
                 ${apt.contact_info ? `<div class="popup-detail"><strong>Contact:</strong> ${apt.contact_info}</div>` : ''}
                 ${apt.notes ? `<div class="popup-detail"><strong>Notes:</strong> ${apt.notes}</div>` : ''}
+                ${apt.source ? `<div class="popup-detail"><a href="${apt.source}" target="_blank" style="color:#3182ce;text-decoration:none">🔗 Verification Source</a></div>` : ''}
+                ${apt.verified ? '<div class="popup-detail" style="color:#38a169;font-weight:600">✓ Verified</div>' : ''}
                 <div class="popup-detail" style="margin-top:8px">
                     <strong>Status:</strong>
                     <select class="status-select" onchange="updateStatus(${idx}, this.value)">
@@ -701,6 +715,7 @@
                     </select>
                 </td>
                 <td>${apt.notes || ''}</td>
+                <td>${apt.source ? `<a href="${apt.source}" target="_blank" style="color:#3182ce">🔗</a>` : ''} ${apt.verified ? '✓' : ''}</td>
             </tr>`;
         }).join('');
 
