@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VA-7 Apartment Complex Dashboard | Schiarizzi Campaign</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <h2>Loading Dashboard</h2>
+    <p>Initializing SQLite database...</p>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <h1>🏢 VA-7 Apartment Dashboard</h1>
+    <div class="subtitle">Schiarizzi for Congress — Canvassing Outreach</div>
+  </div>
+  <div class="header-right">
+    <span class="badge" id="totalBuildingsBadge">-- Buildings</span>
+    <span class="badge" id="totalUnitsBadge">-- Est. Units</span>
+    <span class="badge badge-sync" title="Last data sync">🔄 <span id="syncTime">--</span></span>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="stats-bar" id="statsBar"></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="mapTab">🗺️ Map</button>
+  <button class="tab-btn" data-tab="tableTab">📋 Table</button>
+  <button class="tab-btn" data-tab="electionTab">🗳️ Election Data</button>
+  <div class="tab-actions">
+    <button class="btn btn-sm" id="sqlToggle">⚡ SQL Query</button>
+    <button class="btn btn-sm" id="exportBtn">📥 Export CSV</button>
+    <button class="btn btn-sm" id="printBtn">🖨️ Print</button>
+  </div>
+</div>
+
+<!-- SQL Panel -->
+<div id="sqlPanel" class="sql-panel hidden">
+  <div class="sql-header">
+    <span>SQL Query — Run custom queries against the apartment database</span>
+    <div class="sql-examples">
+      Examples:
+      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT area, COUNT(*) as buildings, SUM(est_units) as total_units FROM apartments WHERE status != 'Out of District' GROUP BY area ORDER BY total_units DESC">Units by Area</button>
+      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT name, address, est_units FROM apartments WHERE est_units >= 400 AND status != 'Out of District' ORDER BY est_units DESC">Large Buildings</button>
+      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT status, COUNT(*) as count, SUM(est_units) as units FROM apartments GROUP BY status">Status Summary</button>
+      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT county, COUNT(*) as buildings, SUM(est_units) as units FROM apartments WHERE status != 'Out of District' GROUP BY county ORDER BY units DESC">By County</button>
+    </div>
+  </div>
+  <div class="sql-input-wrap">
+    <textarea id="sqlInput" placeholder="SELECT * FROM apartments WHERE est_units > 300 ORDER BY est_units DESC" rows="3"></textarea>
+    <button class="btn btn-primary" id="sqlRunBtn">▶ Run (Ctrl+Enter)</button>
+  </div>
+  <div id="sqlResults"></div>
+</div>
+
+<!-- Filters -->
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="🔍 Search by name, address, or area..." />
+  <div class="filter-group">
+    <label>Area</label>
+    <select id="areaFilter"><option value="">All Areas</option></select>
+  </div>
+  <div class="filter-group">
+    <label>Status</label>
+    <select id="statusFilter">
+      <option value="">All Statuses</option>
+      <option value="Not Contacted">Not Contacted</option>
+      <option value="Contacted">Contacted</option>
+      <option value="Scheduled">Scheduled</option>
+      <option value="Canvassed">Canvassed</option>
+      <option value="Out of District">Out of District</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Type</label>
+    <select id="typeFilter"><option value="">All Types</option></select>
+  </div>
+  <div class="filter-group">
+    <label>Region</label>
+    <select id="regionFilter">
+      <option value="">All Regions</option>
+      <option value="nova">NoVA</option>
+      <option value="central">Central VA</option>
+    </select>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e;"></div> Not Contacted</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#d69e2e;"></div> Contacted</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3182ce;"></div> Scheduled</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#38a169;"></div> Canvassed</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a0aec0;"></div> Out of District</div>
+  </div>
+</div>
+
+<!-- Map Tab -->
+<div id="mapTab" class="tab-content active">
+  <div id="map"></div>
+</div>
+
+<!-- Table Tab -->
+<div id="tableTab" class="tab-content">
+  <div class="table-container">
+    <table id="buildingsTable">
+      <thead>
+        <tr>
+          <th data-sort="name">Name <span class="sort-arrow"></span></th>
+          <th data-sort="address">Address <span class="sort-arrow"></span></th>
+          <th data-sort="area">Area <span class="sort-arrow"></span></th>
+          <th data-sort="units" data-type="number">Est. Units <span class="sort-arrow"></span></th>
+          <th data-sort="type">Type <span class="sort-arrow"></span></th>
+          <th data-sort="community_room">Community Rm</th>
+          <th>Notes</th>
+          <th data-sort="status">Status <span class="sort-arrow"></span></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Election Data Tab -->
+<div id="electionTab" class="tab-content">
+  <div class="election-placeholder">
+    <div class="election-icon">🗳️</div>
+    <h2>Election Data</h2>
+    <p>Precinct-level election data will be available here for cross-referencing with apartment locations.</p>
+    <p class="text-muted">The <code>election_data</code> table is ready in the SQLite database. Import precinct data to enable cross-referencing with apartment locations by county and precinct.</p>
+    <div class="election-schema">
+      <h3>Ready Schema</h3>
+      <pre>election_data (
+  precinct TEXT PRIMARY KEY,
+  county TEXT,
+  registered_voters INTEGER,
+  dem_pct REAL,
+  rep_pct REAL,
+  turnout_2024 REAL,
+  notes TEXT
+)</pre>
+    </div>
+  </div>
+</div>
+
+<footer>
+  VA-7 Apartment Dashboard · Schiarizzi for Congress · Data updated March 2026<br>
+  Powered by sql.js (SQLite in the browser) · <a href="https://github.com/cupOJoseph/va7-apartments" target="_blank">GitHub</a>
+</footer>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
