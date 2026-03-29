@@ -1,169 +1,871 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VA-7 Apartment Complex Dashboard | Schiarizzi Campaign</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-<link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VA-7 Apartment Dashboard — Campaign Canvassing Tool</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --accent: #e53e3e;
+            --accent-light: #fc8181;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --info: #3182ce;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+        }
+        .header-stat {
+            text-align: center;
+        }
+        .header-stat .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .header-stat .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--border);
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .tab:hover { color: var(--primary); background: #edf2f7; }
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        /* Tab content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Map */
+        #map { height: calc(100vh - 140px); width: 100%; }
+        .map-legend {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;
+            font-size: 0.8rem;
+        }
+        .map-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 0;
+        }
+        .map-legend .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        /* List tab */
+        .list-container { padding: 16px; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .controls input, .controls select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .controls input:focus, .controls select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        }
+        .controls input[type="text"] { min-width: 250px; }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover { opacity: 0.9; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover { background: #edf2f7; }
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            font-size: 0.85rem;
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+        th:hover { background: var(--primary-light); }
+        th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover { background: #edf2f7; }
+        tr.out-of-district { background: #fff5f5; opacity: 0.7; }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .status-not-contacted { background: #e2e8f0; color: #4a5568; }
+        .status-contacted { background: #bee3f8; color: #2b6cb0; }
+        .status-scheduled { background: #fefcbf; color: #975a16; }
+        .status-canvassed { background: #c6f6d5; color: #276749; }
+        .status-declined { background: #fed7d7; color: #9b2c2c; }
+        .status-out { background: #fff5f5; color: #9b2c2c; border: 1px dashed #fc8181; }
+        /* Residents tab */
+        .residents-container { padding: 16px; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state h2 { font-size: 1.5rem; margin-bottom: 10px; color: var(--text); }
+        .empty-state p { max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        /* Popup */
+        .leaflet-popup-content { min-width: 250px; }
+        .popup-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+        .popup-detail { margin: 3px 0; font-size: 0.85rem; color: #4a5568; }
+        .popup-detail strong { color: var(--text); }
+        /* Status dropdown */
+        .status-select {
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background: white;
+        }
+        /* Count badge */
+        .count-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 6px;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 8px; text-align: center; }
+            .header-stats { justify-content: center; }
+            .controls { flex-direction: column; }
+            .controls input[type="text"] { min-width: 100%; }
+            .tab { padding: 10px 16px; font-size: 0.85rem; }
+        }
+        /* Loading overlay */
+        .loading {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading.hidden { display: none; }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading p { margin-top: 16px; color: var(--text-muted); font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay">
-  <div class="loading-content">
-    <div class="spinner"></div>
-    <h2>Loading Dashboard</h2>
-    <p>Initializing SQLite database...</p>
-  </div>
-</div>
-
-<!-- Header -->
-<header class="header">
-  <div class="header-left">
-    <h1>🏢 VA-7 Apartment Dashboard</h1>
-    <div class="subtitle">Schiarizzi for Congress — Canvassing Outreach</div>
-  </div>
-  <div class="header-right">
-    <span class="badge" id="totalBuildingsBadge">-- Buildings</span>
-    <span class="badge" id="totalUnitsBadge">-- Est. Units</span>
-    <span class="badge badge-sync" title="Last data sync">🔄 <span id="syncTime">--</span></span>
-  </div>
-</header>
-
-<!-- Stats -->
-<div class="stats-bar" id="statsBar"></div>
-
-<!-- Tabs -->
-<div class="tabs">
-  <button class="tab-btn active" data-tab="mapTab">🗺️ Map</button>
-  <button class="tab-btn" data-tab="tableTab">📋 Table</button>
-  <button class="tab-btn" data-tab="electionTab">🗳️ Election Data</button>
-  <div class="tab-actions">
-    <button class="btn btn-sm" id="sqlToggle">⚡ SQL Query</button>
-    <button class="btn btn-sm" id="exportBtn">📥 Export CSV</button>
-    <button class="btn btn-sm" id="printBtn">🖨️ Print</button>
-  </div>
-</div>
-
-<!-- SQL Panel -->
-<div id="sqlPanel" class="sql-panel hidden">
-  <div class="sql-header">
-    <span>SQL Query — Run custom queries against the apartment database</span>
-    <div class="sql-examples">
-      Examples:
-      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT area, COUNT(*) as buildings, SUM(est_units) as total_units FROM apartments WHERE status != 'Out of District' GROUP BY area ORDER BY total_units DESC">Units by Area</button>
-      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT name, address, est_units FROM apartments WHERE est_units >= 400 AND status != 'Out of District' ORDER BY est_units DESC">Large Buildings</button>
-      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT status, COUNT(*) as count, SUM(est_units) as units FROM apartments GROUP BY status">Status Summary</button>
-      <button class="sql-example" onclick="document.getElementById('sqlInput').value=this.dataset.sql" data-sql="SELECT county, COUNT(*) as buildings, SUM(est_units) as units FROM apartments WHERE status != 'Out of District' GROUP BY county ORDER BY units DESC">By County</button>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading VA-7 Apartment Dashboard...</p>
     </div>
-  </div>
-  <div class="sql-input-wrap">
-    <textarea id="sqlInput" placeholder="SELECT * FROM apartments WHERE est_units > 300 ORDER BY est_units DESC" rows="3"></textarea>
-    <button class="btn btn-primary" id="sqlRunBtn">▶ Run (Ctrl+Enter)</button>
-  </div>
-  <div id="sqlResults"></div>
-</div>
 
-<!-- Filters -->
-<div class="controls">
-  <input type="text" id="searchInput" placeholder="🔍 Search by name, address, or area..." />
-  <div class="filter-group">
-    <label>Area</label>
-    <select id="areaFilter"><option value="">All Areas</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Status</label>
-    <select id="statusFilter">
-      <option value="">All Statuses</option>
-      <option value="Not Contacted">Not Contacted</option>
-      <option value="Contacted">Contacted</option>
-      <option value="Scheduled">Scheduled</option>
-      <option value="Canvassed">Canvassed</option>
-      <option value="Out of District">Out of District</option>
-    </select>
-  </div>
-  <div class="filter-group">
-    <label>Type</label>
-    <select id="typeFilter"><option value="">All Types</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Region</label>
-    <select id="regionFilter">
-      <option value="">All Regions</option>
-      <option value="nova">NoVA</option>
-      <option value="central">Central VA</option>
-    </select>
-  </div>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e;"></div> Not Contacted</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#d69e2e;"></div> Contacted</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#3182ce;"></div> Scheduled</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#38a169;"></div> Canvassed</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#a0aec0;"></div> Out of District</div>
-  </div>
-</div>
-
-<!-- Map Tab -->
-<div id="mapTab" class="tab-content active">
-  <div id="map"></div>
-</div>
-
-<!-- Table Tab -->
-<div id="tableTab" class="tab-content">
-  <div class="table-container">
-    <table id="buildingsTable">
-      <thead>
-        <tr>
-          <th data-sort="name">Name <span class="sort-arrow"></span></th>
-          <th data-sort="address">Address <span class="sort-arrow"></span></th>
-          <th data-sort="area">Area <span class="sort-arrow"></span></th>
-          <th data-sort="units" data-type="number">Est. Units <span class="sort-arrow"></span></th>
-          <th data-sort="type">Type <span class="sort-arrow"></span></th>
-          <th data-sort="community_room">Community Rm</th>
-          <th>Notes</th>
-          <th data-sort="status">Status <span class="sort-arrow"></span></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Election Data Tab -->
-<div id="electionTab" class="tab-content">
-  <div class="election-placeholder">
-    <div class="election-icon">🗳️</div>
-    <h2>Election Data</h2>
-    <p>Precinct-level election data will be available here for cross-referencing with apartment locations.</p>
-    <p class="text-muted">The <code>election_data</code> table is ready in the SQLite database. Import precinct data to enable cross-referencing with apartment locations by county and precinct.</p>
-    <div class="election-schema">
-      <h3>Ready Schema</h3>
-      <pre>election_data (
-  precinct TEXT PRIMARY KEY,
-  county TEXT,
-  registered_voters INTEGER,
-  dem_pct REAL,
-  rep_pct REAL,
-  turnout_2024 REAL,
-  notes TEXT
-)</pre>
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h1>🏢 VA-7 Apartment Dashboard</h1>
+            <div class="subtitle">Campaign Canvassing Tool — New Virginia 7th District</div>
+        </div>
+        <div class="header-stats">
+            <div class="header-stat">
+                <div class="num" id="stat-total">—</div>
+                <div class="label">Complexes</div>
+            </div>
+            <div class="header-stat">
+                <div class="num" id="stat-units">—</div>
+                <div class="label">Est. Units</div>
+            </div>
+            <div class="header-stat">
+                <div class="num" id="stat-contacted">—</div>
+                <div class="label">Contacted</div>
+            </div>
+            <div class="header-stat">
+                <div class="num" id="stat-canvassed">—</div>
+                <div class="label">Canvassed</div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<footer>
-  VA-7 Apartment Dashboard · Schiarizzi for Congress · Data updated March 2026<br>
-  Powered by sql.js (SQLite in the browser) · <a href="https://github.com/cupOJoseph/va7-apartments" target="_blank">GitHub</a>
-</footer>
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" data-tab="map">🗺️ Map</div>
+        <div class="tab" data-tab="list">📋 List <span class="count-badge" id="list-count"></span></div>
+        <div class="tab" data-tab="residents">👥 Residents</div>
+    </div>
 
-<!-- Libraries -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
-<script src="js/db.js"></script>
-<script src="js/app.js"></script>
+    <!-- Map Tab -->
+    <div class="tab-content active" id="tab-map">
+        <div id="map"></div>
+    </div>
+
+    <!-- List Tab -->
+    <div class="tab-content" id="tab-list">
+        <div class="list-container">
+            <div class="controls">
+                <input type="text" id="search" placeholder="Search by name, address, area...">
+                <select id="filter-area">
+                    <option value="">All Areas</option>
+                </select>
+                <select id="filter-region">
+                    <option value="">All Regions</option>
+                    <option value="NoVA">NoVA</option>
+                    <option value="Central VA">Central VA</option>
+                </select>
+                <select id="filter-type">
+                    <option value="">All Types</option>
+                    <option value="high-rise">High-Rise</option>
+                    <option value="mid-rise">Mid-Rise</option>
+                    <option value="garden">Garden</option>
+                    <option value="townhouse">Townhouse</option>
+                </select>
+                <select id="filter-status">
+                    <option value="">All Statuses</option>
+                    <option value="Not Contacted">Not Contacted</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Canvassed">Canvassed</option>
+                    <option value="Declined">Declined</option>
+                </select>
+                <button class="btn btn-primary" onclick="exportCSV()">📥 Export CSV</button>
+                <button class="btn btn-outline" onclick="resetFilters()">↻ Reset</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="name">Name <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="address">Address <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="area">Area <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="region">Region <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="est_units">Units <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="type">Type <span class="sort-arrow">⇕</span></th>
+                            <th data-sort="community_room">Comm. Room</th>
+                            <th data-sort="status">Status <span class="sort-arrow">⇕</span></th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="apt-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Residents Tab -->
+    <div class="tab-content" id="tab-residents">
+        <div class="residents-container">
+            <div class="controls">
+                <input type="text" id="resident-search" placeholder="Search residents by name, address, employer...">
+                <select id="resident-filter-apt">
+                    <option value="">All Apartments</option>
+                </select>
+                <select id="resident-filter-party">
+                    <option value="">All Parties</option>
+                    <option value="DEM">Democratic</option>
+                    <option value="REP">Republican</option>
+                    <option value="IND">Independent</option>
+                    <option value="OTH">Other</option>
+                </select>
+                <button class="btn btn-outline" onclick="exportResidentsCSV()">📥 Export CSV</button>
+            </div>
+            <div class="empty-state" id="residents-empty">
+                <h2>👥 Residents & FEC Data</h2>
+                <p>This tab will be populated with FEC individual contribution data. 
+                   Schema is ready: name, address, apartment, employer, occupation, 
+                   contribution amount/date, recipient, and FEC filing ID.</p>
+                <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">
+                    Database schema initialized with <code>residents</code> table linked to apartments via foreign key.
+                </p>
+            </div>
+            <div class="table-wrapper" id="residents-table-wrapper" style="display:none">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="name">Name</th>
+                            <th data-sort="address">Address</th>
+                            <th data-sort="apartment">Apartment</th>
+                            <th data-sort="employer">Employer</th>
+                            <th data-sort="occupation">Occupation</th>
+                            <th data-sort="contribution_amount">Amount</th>
+                            <th data-sort="contribution_date">Date</th>
+                            <th data-sort="recipient">Recipient</th>
+                            <th data-sort="party">Party</th>
+                        </tr>
+                    </thead>
+                    <tbody id="residents-table-body"></tbody>
+                </table>
+            </div>
+            <div id="residents-summary" style="display:none; margin-top:20px; padding:16px; background:var(--card-bg); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+                <h3 style="margin-bottom:12px">📊 Contribution Summary</h3>
+                <div id="summary-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+    <script>
+    // ============================================================
+    // APP STATE
+    // ============================================================
+    let apartments = [];
+    let db = null;
+    let map = null;
+    let markerClusterGroup = null;
+    let districtLayer = null;
+    let sortCol = 'name';
+    let sortDir = 1;
+
+    const STATUS_COLORS = {
+        'Not Contacted': '#a0aec0',
+        'Contacted': '#4299e1',
+        'Scheduled': '#ecc94b',
+        'Canvassed': '#48bb78',
+        'Declined': '#fc8181'
+    };
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    async function init() {
+        try {
+            // Load data in parallel
+            const [aptResp, boundaryResp] = await Promise.all([
+                fetch('data/apartments.json'),
+                fetch('data/va7-boundary.geojson')
+            ]);
+            apartments = await aptResp.json();
+            const boundary = await boundaryResp.json();
+
+            // Restore statuses from localStorage
+            const saved = JSON.parse(localStorage.getItem('va7-apt-statuses') || '{}');
+            apartments.forEach(apt => {
+                const key = apt.name + '|' + apt.address;
+                if (saved[key]) apt.status = saved[key];
+            });
+
+            // Init sql.js
+            const SQL = await initSqlJs({
+                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}`
+            });
+            db = new SQL.Database();
+            initDB();
+
+            // Populate DB with apartment data
+            apartments.forEach(apt => {
+                db.run(
+                    `INSERT INTO apartments (name, address, area, county, region, lat, lng, est_units, type, community_room, contact_info, notes, status, in_district, precinct)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [apt.name, apt.address, apt.area, apt.county, apt.region, apt.lat, apt.lng,
+                     apt.est_units, apt.type, apt.community_room, apt.contact_info || '',
+                     apt.notes, apt.status, apt.in_district ? 1 : 0, apt.precinct || '']
+                );
+            });
+
+            // Init map
+            initMap(boundary);
+
+            // Populate filters
+            populateFilters();
+
+            // Render list
+            renderTable();
+
+            // Update stats
+            updateStats();
+
+            // Setup tabs
+            setupTabs();
+
+            // Setup sort
+            setupSort();
+
+            // Setup filters
+            setupFilters();
+
+            // Hide loading
+            document.getElementById('loading').classList.add('hidden');
+        } catch (err) {
+            console.error('Init error:', err);
+            document.getElementById('loading').innerHTML = `
+                <h2 style="color:var(--danger)">Error Loading Dashboard</h2>
+                <p>${err.message}</p>
+            `;
+        }
+    }
+
+    function initDB() {
+        db.run(`
+            CREATE TABLE IF NOT EXISTS apartments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                address TEXT,
+                area TEXT,
+                county TEXT,
+                region TEXT,
+                lat REAL,
+                lng REAL,
+                est_units INTEGER,
+                type TEXT,
+                community_room TEXT,
+                contact_info TEXT,
+                notes TEXT,
+                status TEXT DEFAULT 'Not Contacted',
+                in_district BOOLEAN DEFAULT 1,
+                precinct TEXT
+            )
+        `);
+        db.run(`
+            CREATE TABLE IF NOT EXISTS residents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                address TEXT,
+                apartment_id INTEGER REFERENCES apartments(id),
+                employer TEXT,
+                occupation TEXT,
+                contribution_amount REAL,
+                contribution_date TEXT,
+                recipient TEXT,
+                party TEXT,
+                fec_filing_id TEXT
+            )
+        `);
+        db.run(`CREATE INDEX IF NOT EXISTS idx_residents_apartment ON residents(apartment_id)`);
+        db.run(`CREATE INDEX IF NOT EXISTS idx_apartments_area ON apartments(area)`);
+        db.run(`CREATE INDEX IF NOT EXISTS idx_apartments_status ON apartments(status)`);
+    }
+
+    // ============================================================
+    // MAP
+    // ============================================================
+    function initMap(boundary) {
+        map = L.map('map').setView([38.5, -78.0], 8);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // District boundary
+        districtLayer = L.geoJSON(boundary, {
+            style: {
+                color: '#1a365d',
+                weight: 3,
+                fillColor: '#2b6cb0',
+                fillOpacity: 0.08,
+                dashArray: '8 4'
+            }
+        }).addTo(map);
+
+        // Marker cluster group
+        markerClusterGroup = L.markerClusterGroup({
+            maxClusterRadius: 50,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            iconCreateFunction: function(cluster) {
+                const count = cluster.getChildCount();
+                let size = 'small';
+                if (count > 50) size = 'large';
+                else if (count > 20) size = 'medium';
+                return L.divIcon({
+                    html: `<div style="background:var(--primary);color:white;border-radius:50%;width:${size==='large'?50:size==='medium'?40:30}px;height:${size==='large'?50:size==='medium'?40:30}px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${size==='large'?14:size==='medium'?12:11}px;box-shadow:0 2px 6px rgba(0,0,0,0.3)">${count}</div>`,
+                    className: 'marker-cluster',
+                    iconSize: L.point(size==='large'?50:size==='medium'?40:30, size==='large'?50:size==='medium'?40:30)
+                });
+            }
+        });
+
+        addMarkers();
+        map.addLayer(markerClusterGroup);
+
+        // Fit to district bounds
+        map.fitBounds(districtLayer.getBounds(), { padding: [20, 20] });
+
+        // Legend
+        addLegend();
+    }
+
+    function addMarkers() {
+        markerClusterGroup.clearLayers();
+        apartments.forEach((apt, idx) => {
+            if (!apt.lat || !apt.lng) return;
+            
+            const color = apt.in_district === false ? '#9b2c2c' : (STATUS_COLORS[apt.status] || '#a0aec0');
+            
+            const icon = L.divIcon({
+                html: `<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>`,
+                className: '',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            const marker = L.marker([apt.lat, apt.lng], { icon });
+            
+            marker.bindPopup(`
+                <div class="popup-title">${apt.name}</div>
+                <div class="popup-detail"><strong>Address:</strong> ${apt.address}</div>
+                <div class="popup-detail"><strong>Area:</strong> ${apt.area} (${apt.region})</div>
+                <div class="popup-detail"><strong>Est. Units:</strong> ${apt.est_units || 'Unknown'}</div>
+                <div class="popup-detail"><strong>Type:</strong> ${apt.type || 'Unknown'}</div>
+                <div class="popup-detail"><strong>Community Room:</strong> ${apt.community_room || 'Unknown'}</div>
+                ${apt.contact_info ? `<div class="popup-detail"><strong>Contact:</strong> ${apt.contact_info}</div>` : ''}
+                ${apt.notes ? `<div class="popup-detail"><strong>Notes:</strong> ${apt.notes}</div>` : ''}
+                <div class="popup-detail" style="margin-top:8px">
+                    <strong>Status:</strong>
+                    <select class="status-select" onchange="updateStatus(${idx}, this.value)">
+                        ${['Not Contacted','Contacted','Scheduled','Canvassed','Declined'].map(s =>
+                            `<option value="${s}" ${apt.status===s?'selected':''}>${s}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                ${apt.in_district === false ? '<div class="popup-detail" style="color:#e53e3e;font-weight:700;margin-top:6px">⚠️ OUT OF DISTRICT</div>' : ''}
+            `);
+
+            markerClusterGroup.addLayer(marker);
+        });
+    }
+
+    function addLegend() {
+        const legend = L.control({ position: 'bottomleft' });
+        legend.onAdd = function() {
+            const div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = '<strong style="margin-bottom:6px;display:block">Status</strong>';
+            Object.entries(STATUS_COLORS).forEach(([status, color]) => {
+                div.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${status}</div>`;
+            });
+            div.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:#9b2c2c"></div>Out of District</div>`;
+            return div;
+        };
+        legend.addTo(map);
+    }
+
+    // ============================================================
+    // TABLE
+    // ============================================================
+    function renderTable() {
+        const filtered = getFilteredApartments();
+        const sorted = [...filtered].sort((a, b) => {
+            let va = a[sortCol] || '';
+            let vb = b[sortCol] || '';
+            if (sortCol === 'est_units') {
+                va = parseInt(va) || 0;
+                vb = parseInt(vb) || 0;
+            }
+            if (typeof va === 'string') va = va.toLowerCase();
+            if (typeof vb === 'string') vb = vb.toLowerCase();
+            if (va < vb) return -sortDir;
+            if (va > vb) return sortDir;
+            return 0;
+        });
+
+        const tbody = document.getElementById('apt-table-body');
+        tbody.innerHTML = sorted.map((apt, i) => {
+            const idx = apartments.indexOf(apt);
+            const statusClass = 'status-' + (apt.in_district === false ? 'out' : apt.status.toLowerCase().replace(/\s+/g, '-'));
+            const rowClass = apt.in_district === false ? 'out-of-district' : '';
+            return `<tr class="${rowClass}">
+                <td><strong>${apt.name}</strong></td>
+                <td>${apt.address}</td>
+                <td>${apt.area}</td>
+                <td>${apt.region}</td>
+                <td>${apt.est_units || '?'}</td>
+                <td>${apt.type || '?'}</td>
+                <td>${apt.community_room || '?'}</td>
+                <td>
+                    <select class="status-select" onchange="updateStatus(${idx}, this.value)">
+                        ${['Not Contacted','Contacted','Scheduled','Canvassed','Declined'].map(s =>
+                            `<option value="${s}" ${apt.status===s?'selected':''}>${s}</option>`
+                        ).join('')}
+                    </select>
+                </td>
+                <td>${apt.notes || ''}</td>
+            </tr>`;
+        }).join('');
+
+        document.getElementById('list-count').textContent = filtered.length;
+    }
+
+    function getFilteredApartments() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const area = document.getElementById('filter-area').value;
+        const region = document.getElementById('filter-region').value;
+        const type = document.getElementById('filter-type').value;
+        const status = document.getElementById('filter-status').value;
+
+        return apartments.filter(apt => {
+            if (search && !`${apt.name} ${apt.address} ${apt.area} ${apt.notes}`.toLowerCase().includes(search)) return false;
+            if (area && apt.area !== area) return false;
+            if (region && apt.region !== region) return false;
+            if (type && apt.type !== type) return false;
+            if (status && apt.status !== status) return false;
+            return true;
+        });
+    }
+
+    // ============================================================
+    // STATUS & PERSISTENCE
+    // ============================================================
+    function updateStatus(idx, newStatus) {
+        apartments[idx].status = newStatus;
+        
+        // Save to localStorage
+        const saved = JSON.parse(localStorage.getItem('va7-apt-statuses') || '{}');
+        const key = apartments[idx].name + '|' + apartments[idx].address;
+        saved[key] = newStatus;
+        localStorage.setItem('va7-apt-statuses', JSON.stringify(saved));
+
+        // Update DB
+        if (db) {
+            db.run('UPDATE apartments SET status = ? WHERE name = ? AND address = ?',
+                [newStatus, apartments[idx].name, apartments[idx].address]);
+        }
+
+        // Refresh
+        addMarkers();
+        renderTable();
+        updateStats();
+    }
+
+    // ============================================================
+    // STATS
+    // ============================================================
+    function updateStats() {
+        const inDistrict = apartments.filter(a => a.in_district !== false);
+        document.getElementById('stat-total').textContent = inDistrict.length;
+        document.getElementById('stat-units').textContent = 
+            (inDistrict.reduce((sum, a) => sum + (a.est_units || 0), 0) / 1000).toFixed(1) + 'k';
+        document.getElementById('stat-contacted').textContent = 
+            inDistrict.filter(a => ['Contacted','Scheduled','Canvassed'].includes(a.status)).length;
+        document.getElementById('stat-canvassed').textContent = 
+            inDistrict.filter(a => a.status === 'Canvassed').length;
+    }
+
+    // ============================================================
+    // FILTERS & SORT
+    // ============================================================
+    function populateFilters() {
+        const areas = [...new Set(apartments.map(a => a.area))].sort();
+        const areaSelect = document.getElementById('filter-area');
+        areas.forEach(area => {
+            const opt = document.createElement('option');
+            opt.value = area;
+            opt.textContent = area;
+            areaSelect.appendChild(opt);
+        });
+
+        // Resident apartment filter
+        const resAptSelect = document.getElementById('resident-filter-apt');
+        apartments.filter(a => a.in_district !== false).forEach(apt => {
+            const opt = document.createElement('option');
+            opt.value = apt.name;
+            opt.textContent = apt.name;
+            resAptSelect.appendChild(opt);
+        });
+    }
+
+    function setupFilters() {
+        ['search', 'filter-area', 'filter-region', 'filter-type', 'filter-status'].forEach(id => {
+            document.getElementById(id).addEventListener(id === 'search' ? 'input' : 'change', renderTable);
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('search').value = '';
+        document.getElementById('filter-area').value = '';
+        document.getElementById('filter-region').value = '';
+        document.getElementById('filter-type').value = '';
+        document.getElementById('filter-status').value = '';
+        renderTable();
+    }
+
+    function setupSort() {
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                const col = th.dataset.sort;
+                if (sortCol === col) sortDir *= -1;
+                else { sortCol = col; sortDir = 1; }
+                renderTable();
+            });
+        });
+    }
+
+    // ============================================================
+    // TABS
+    // ============================================================
+    function setupTabs() {
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                if (tab.dataset.tab === 'map') {
+                    setTimeout(() => map.invalidateSize(), 100);
+                }
+            });
+        });
+    }
+
+    // ============================================================
+    // CSV EXPORT
+    // ============================================================
+    function exportCSV() {
+        const filtered = getFilteredApartments();
+        const headers = ['Name','Address','Area','County','Region','Lat','Lng','Est Units','Type','Community Room','Contact','Notes','Status','In District'];
+        const rows = filtered.map(a => [
+            a.name, a.address, a.area, a.county, a.region, a.lat, a.lng,
+            a.est_units, a.type, a.community_room, a.contact_info, a.notes,
+            a.status, a.in_district
+        ]);
+        
+        const csv = [headers, ...rows].map(r => 
+            r.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')
+        ).join('\n');
+        
+        downloadFile('va7-apartments.csv', csv, 'text/csv');
+    }
+
+    function exportResidentsCSV() {
+        // Placeholder for when residents data is loaded
+        alert('Residents data not yet loaded. This will export FEC contribution data once imported.');
+    }
+
+    function downloadFile(filename, content, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ============================================================
+    // INIT ON LOAD
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

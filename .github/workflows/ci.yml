@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate index.html exists
+        run: |
+          if [ ! -f index.html ]; then
+            echo "❌ index.html not found"
+            exit 1
+          fi
+          echo "✅ index.html exists"
+
+      - name: Validate HTML structure
+        run: |
+          # Check for basic HTML5 structure
+          grep -q '<!DOCTYPE html>' index.html || { echo "❌ Missing DOCTYPE"; exit 1; }
+          grep -q '<html' index.html || { echo "❌ Missing <html> tag"; exit 1; }
+          grep -q '<head>' index.html || { echo "❌ Missing <head> tag"; exit 1; }
+          grep -q '<body>' index.html || { echo "❌ Missing <body> tag"; exit 1; }
+          grep -q '</html>' index.html || { echo "❌ Missing closing </html>"; exit 1; }
+          echo "✅ HTML structure valid"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate apartments.json
+        run: |
+          if [ ! -f data/apartments.json ]; then
+            echo "❌ data/apartments.json not found"
+            exit 1
+          fi
+          
+          # Validate JSON syntax
+          node -e "
+            const data = require('./data/apartments.json');
+            if (!Array.isArray(data)) {
+              console.error('❌ apartments.json is not an array');
+              process.exit(1);
+            }
+            console.log('Total apartments:', data.length);
+            
+            // Validate schema
+            const required = ['name', 'address', 'lat', 'lng', 'area', 'region'];
+            let errors = 0;
+            data.forEach((apt, i) => {
+              required.forEach(field => {
+                if (apt[field] === undefined) {
+                  console.error('❌ Entry ' + i + ' (' + (apt.name || 'unknown') + ') missing field: ' + field);
+                  errors++;
+                }
+              });
+              if (apt.lat !== null && (typeof apt.lat !== 'number' || apt.lat < 36 || apt.lat > 40)) {
+                console.error('❌ Entry ' + i + ' (' + apt.name + ') has invalid lat: ' + apt.lat);
+                errors++;
+              }
+              if (apt.lng !== null && (typeof apt.lng !== 'number' || apt.lng < -81 || apt.lng > -76)) {
+                console.error('❌ Entry ' + i + ' (' + apt.name + ') has invalid lng: ' + apt.lng);
+                errors++;
+              }
+            });
+            
+            if (errors > 0) {
+              console.error('❌ Found ' + errors + ' schema errors');
+              process.exit(1);
+            }
+            
+            // Summary
+            const regions = {};
+            data.forEach(a => { regions[a.region] = (regions[a.region] || 0) + 1; });
+            console.log('Regions:', JSON.stringify(regions));
+            console.log('✅ apartments.json valid (' + data.length + ' entries)');
+          "
+
+      - name: Validate va7-boundary.geojson
+        run: |
+          if [ ! -f data/va7-boundary.geojson ]; then
+            echo "❌ data/va7-boundary.geojson not found"
+            exit 1
+          fi
+          
+          node -e "
+            const data = require('./data/va7-boundary.geojson');
+            if (data.type !== 'FeatureCollection') {
+              console.error('❌ Not a FeatureCollection');
+              process.exit(1);
+            }
+            if (!data.features || data.features.length === 0) {
+              console.error('❌ No features found');
+              process.exit(1);
+            }
+            const feat = data.features[0];
+            if (!feat.geometry || !feat.geometry.coordinates) {
+              console.error('❌ Missing geometry/coordinates');
+              process.exit(1);
+            }
+            console.log('District:', feat.properties.NAME);
+            console.log('Geometry type:', feat.geometry.type);
+            console.log('✅ va7-boundary.geojson valid');
+          "
+
+      - name: Check CDN URLs are reachable
+        run: |
+          urls=(
+            "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+            "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"
+          )
+          for url in "${urls[@]}"; do
+            status=$(curl -o /dev/null -s -w "%{http_code}" --max-time 10 "$url")
+            if [ "$status" -eq 200 ]; then
+              echo "✅ $url ($status)"
+            else
+              echo "❌ $url ($status)"
+              exit 1
+            fi
+          done
+
+      - name: Check file sizes
+        run: |
+          echo "=== File sizes ==="
+          du -sh index.html
+          du -sh data/apartments.json
+          du -sh data/va7-boundary.geojson
+          
+          # Warn if apartments.json is suspiciously small
+          size=$(wc -c < data/apartments.json)
+          if [ "$size" -lt 10000 ]; then
+            echo "⚠️ apartments.json seems too small ($size bytes)"
+            exit 1
+          fi
+          echo "✅ File sizes look reasonable"
