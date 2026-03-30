@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VA-7 Apartment Dashboard — Campaign Canvassing Tool</title>
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
     <!-- Leaflet MarkerCluster CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
@@ -47,6 +47,17 @@
             font-size: 1.4rem;
             font-weight: 700;
             letter-spacing: -0.5px;
+        }
+        .verified-badge {
+            display: inline-block;
+            background: #38a169;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-weight: 600;
         }
         .header .subtitle {
             font-size: 0.85rem;
@@ -284,7 +295,7 @@
     <!-- Header -->
     <div class="header">
         <div>
-            <h1>🏢 VA-7 Apartment Dashboard</h1>
+            <h1>🏢 VA-7 Apartment Dashboard <span class="verified-badge">✓ Verified</span></h1>
             <div class="subtitle">Campaign Canvassing Tool — New Virginia 7th District</div>
         </div>
         <div class="header-stats">
@@ -363,6 +374,7 @@
                             <th data-sort="community_room">Comm. Room</th>
                             <th data-sort="status">Status <span class="sort-arrow">⇕</span></th>
                             <th>Notes</th>
+                            <th>Source</th>
                         </tr>
                     </thead>
                     <tbody id="apt-table-body"></tbody>
@@ -511,7 +523,7 @@
             console.error('Init error:', err);
             document.getElementById('loading').innerHTML = `
                 <h2 style="color:var(--danger)">Error Loading Dashboard</h2>
-                <p>${err.message}</p>
+                <p>${esc(err.message)}</p>
             `;
         }
     }
@@ -623,15 +635,18 @@
 
             const marker = L.marker([apt.lat, apt.lng], { icon });
             
+            const srcUrl = safeUrl(apt.source);
             marker.bindPopup(`
-                <div class="popup-title">${apt.name}</div>
-                <div class="popup-detail"><strong>Address:</strong> ${apt.address}</div>
-                <div class="popup-detail"><strong>Area:</strong> ${apt.area} (${apt.region})</div>
-                <div class="popup-detail"><strong>Est. Units:</strong> ${apt.est_units || 'Unknown'}</div>
-                <div class="popup-detail"><strong>Type:</strong> ${apt.type || 'Unknown'}</div>
-                <div class="popup-detail"><strong>Community Room:</strong> ${apt.community_room || 'Unknown'}</div>
-                ${apt.contact_info ? `<div class="popup-detail"><strong>Contact:</strong> ${apt.contact_info}</div>` : ''}
-                ${apt.notes ? `<div class="popup-detail"><strong>Notes:</strong> ${apt.notes}</div>` : ''}
+                <div class="popup-title">${esc(apt.name)}</div>
+                <div class="popup-detail"><strong>Address:</strong> ${esc(apt.address)}</div>
+                <div class="popup-detail"><strong>Area:</strong> ${esc(apt.area)} (${esc(apt.region)})</div>
+                <div class="popup-detail"><strong>Est. Units:</strong> ${esc(apt.est_units) || 'Unknown'}</div>
+                <div class="popup-detail"><strong>Type:</strong> ${esc(apt.type) || 'Unknown'}</div>
+                <div class="popup-detail"><strong>Community Room:</strong> ${esc(apt.community_room) || 'Unknown'}</div>
+                ${apt.contact_info ? `<div class="popup-detail"><strong>Contact:</strong> ${esc(apt.contact_info)}</div>` : ''}
+                ${apt.notes ? `<div class="popup-detail"><strong>Notes:</strong> ${esc(apt.notes)}</div>` : ''}
+                ${srcUrl ? `<div class="popup-detail"><a href="${srcUrl}" target="_blank" rel="noopener noreferrer" style="color:#3182ce;text-decoration:none">🔗 Verification Source</a></div>` : ''}
+                ${apt.verified ? '<div class="popup-detail" style="color:#38a169;font-weight:600">✓ Verified</div>' : ''}
                 <div class="popup-detail" style="margin-top:8px">
                     <strong>Status:</strong>
                     <select class="status-select" onchange="updateStatus(${idx}, this.value)">
@@ -685,14 +700,15 @@
             const idx = apartments.indexOf(apt);
             const statusClass = 'status-' + (apt.in_district === false ? 'out' : apt.status.toLowerCase().replace(/\s+/g, '-'));
             const rowClass = apt.in_district === false ? 'out-of-district' : '';
+            const srcLink = safeUrl(apt.source);
             return `<tr class="${rowClass}">
-                <td><strong>${apt.name}</strong></td>
-                <td>${apt.address}</td>
-                <td>${apt.area}</td>
-                <td>${apt.region}</td>
-                <td>${apt.est_units || '?'}</td>
-                <td>${apt.type || '?'}</td>
-                <td>${apt.community_room || '?'}</td>
+                <td><strong>${esc(apt.name)}</strong></td>
+                <td>${esc(apt.address)}</td>
+                <td>${esc(apt.area)}</td>
+                <td>${esc(apt.region)}</td>
+                <td>${esc(apt.est_units) || '?'}</td>
+                <td>${esc(apt.type) || '?'}</td>
+                <td>${esc(apt.community_room) || '?'}</td>
                 <td>
                     <select class="status-select" onchange="updateStatus(${idx}, this.value)">
                         ${['Not Contacted','Contacted','Scheduled','Canvassed','Declined'].map(s =>
@@ -700,7 +716,8 @@
                         ).join('')}
                     </select>
                 </td>
-                <td>${apt.notes || ''}</td>
+                <td>${esc(apt.notes)}</td>
+                <td>${srcLink ? `<a href="${srcLink}" target="_blank" rel="noopener noreferrer" style="color:#3182ce">🔗</a>` : ''} ${apt.verified ? '✓' : ''}</td>
             </tr>`;
         }).join('');
 
@@ -860,6 +877,24 @@
         a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    // ============================================================
+    // SANITIZATION
+    // ============================================================
+    function esc(str) {
+        if (str == null) return '';
+        const div = document.createElement('div');
+        div.textContent = String(str);
+        return div.innerHTML;
+    }
+    function safeUrl(url) {
+        if (!url) return '';
+        try {
+            const u = new URL(url);
+            if (!['http:', 'https:'].includes(u.protocol)) return '';
+            return u.href;
+        } catch { return ''; }
     }
 
     // ============================================================
