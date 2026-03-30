@@ -13,7 +13,8 @@
     "notes": "Income-restricted",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/terwilliger-place-arlington-va/60ygc6s/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cortland Bennett Park",
@@ -29,23 +30,8 @@
     "notes": "Studio/1/2+ bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cortland-bennett-park-arlington-va/rskqsv3/",
-    "verified": true
-  },
-  {
-    "name": "Nalbert Apartments",
-    "address": "1317 Fort Myer Dr, Arlington, VA 22209",
-    "area": "Courthouse",
-    "county": "Arlington",
-    "region": "NoVA",
-    "lat": 38.8913,
-    "lng": -77.0727,
-    "est_units": 50,
-    "type": "mid-rise",
-    "community_room": "Unknown",
-    "notes": "Near Courthouse Metro",
-    "status": "Not Contacted",
-    "source": "https://www.apartments.com/nalbert-apartments-arlington-va/8mb4n72/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Parc Rosslyn Apartments",
@@ -61,7 +47,8 @@
     "notes": "Studio/1/2+ bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/parc-rosslyn-apartments-arlington-va/fbe5kvs/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Ten at Clarendon",
@@ -77,7 +64,8 @@
     "notes": "1/2/3+ bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/ten-at-clarendon-arlington-va/m79gctk/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Sheffield Court",
@@ -93,7 +81,8 @@
     "notes": "Studio/1/2 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/sheffield-court-arlington-va/0x60xt1/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cortland on Adams",
@@ -109,7 +98,8 @@
     "notes": "Pool, fitness",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cortland-on-adams-arlington-va/gfl2g6x/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "1500 Arlington Apartments",
@@ -125,7 +115,8 @@
     "notes": "Studio/1 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/1500-arlington-apartments-arlington-va/hnbe503/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Clarendon Court Apartments",
@@ -141,7 +132,8 @@
     "notes": "1 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/clarendon-court-apartments-arlington-va/8qnger3/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Barton House",
@@ -157,7 +149,8 @@
     "notes": "Studio/1/2 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/barton-house-arlington-va/71r275x/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Clarendon",
@@ -173,7 +166,8 @@
     "notes": "517-1713 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-clarendon-arlington-va/dcv7mkj/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "16th Street Apartments",
@@ -189,7 +183,8 @@
     "notes": "1 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/16th-street-apartments-arlington-va/9m8g634/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Meridian at Courthouse Commons",
@@ -205,7 +200,8 @@
     "notes": "Studio/1/2 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/meridian-at-courthouse-commons-arlington-va/hph65v1/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Sedona|Slate",
@@ -221,7 +217,8 @@
     "notes": "Pool, fitness",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/sedonaslate-arlington-va/y4svpvs/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Tellus",
@@ -237,7 +234,8 @@
     "notes": "Pool, fitness",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/tellus-arlington-va/4n6df1h/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Arlington Courthouse Apartments",
@@ -253,7 +251,8 @@
     "notes": "1/2 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/arlington-courthouse-apartments-arlington-va/brrchl8/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Courthouse Plaza",
@@ -269,7 +268,8 @@
     "notes": "564-1240 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/courthouse-plaza-arlington-va/15nmfd7/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Bell at Courthouse",
@@ -285,7 +285,8 @@
     "notes": "615-2832 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/bell-at-courthouse-arlington-va/413scyh/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Avalon Clarendon",
@@ -301,7 +302,8 @@
     "notes": "612-1345 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/avalon-clarendon-arlington-va/1x0fnq6/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Reserve at Clarendon Centre",
@@ -317,7 +319,8 @@
     "notes": "Equity Residential",
     "status": "Not Contacted",
     "source": "https://www.equityapartments.com/arlington/clarendon/the-reserve-at-clarendon-centre-apartments",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Wholey Legacy Homes",
@@ -333,7 +336,8 @@
     "notes": "1/2/3 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/wholey-legacy-homes-arlington-va/h5zvkl0/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Whispering Oaks",
@@ -349,7 +353,8 @@
     "notes": "1 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/whispering-oaks-arlington-va/sfshwg7/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Crestmont",
@@ -365,7 +370,8 @@
     "notes": "2 bed",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-crestmont-arlington-va/lwbgqee/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Park Georgetown",
@@ -381,7 +387,8 @@
     "notes": "Near Rosslyn",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/park-georgetown-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Virginia Square Plaza",
@@ -397,7 +404,8 @@
     "notes": "510-1385 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/virginia-square-plaza-arlington-va/rgngfh0/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Virginia Square Towers",
@@ -413,7 +421,8 @@
     "notes": "401-1445 sqft, pool",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/virginia-square-towers-arlington-va/8jc58y0/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Virginia Square",
@@ -429,7 +438,8 @@
     "notes": "669-1237 sqft",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/virginia-square-arlington-va/46bhq0l/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Monroe at Virginia Square",
@@ -445,7 +455,8 @@
     "notes": "Near Virginia Square Metro",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-monroe-at-virginia-square-arlington-va/ecp3erp/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Latitude",
@@ -461,7 +472,8 @@
     "notes": "Floor-to-ceiling windows",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/latitude-arlington-va/zfgkvqz/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Bartlett",
@@ -477,7 +489,8 @@
     "notes": "Ballston Quarter",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-bartlett-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Avalon Ballston Square",
@@ -493,7 +506,8 @@
     "notes": "Near Ballston Metro",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/avalon-ballston-square-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Waycroft",
@@ -509,7 +523,8 @@
     "notes": "Luxury high-rise",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-waycroft-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cortland Ballston",
@@ -525,7 +540,8 @@
     "notes": "New listing",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cortland-ballston-arlington-va/w5z477h/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Turnberry Tower",
@@ -541,7 +557,8 @@
     "notes": "Luxury high-rise",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/turnberry-tower-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Waterview",
@@ -557,7 +574,8 @@
     "notes": "River views",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-waterview-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Rosslyn Vue",
@@ -573,7 +591,8 @@
     "notes": "Modern high-rise",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/rosslyn-vue-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Continental",
@@ -589,7 +608,8 @@
     "notes": "Large community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/continental-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "River Place",
@@ -605,7 +625,8 @@
     "notes": "Multi-tower complex",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/river-place-arlington-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Byron on Broad",
@@ -621,7 +642,8 @@
     "notes": "Mixed-use",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/byron-on-broad-falls-church-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Northgate Apartments",
@@ -637,7 +659,8 @@
     "notes": "Garden-style",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/northgate-apartments-falls-church-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Spectrum",
@@ -653,7 +676,8 @@
     "notes": "Near downtown FC",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-spectrum-falls-church-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Winter Hill Senior Apartments",
@@ -669,7 +693,8 @@
     "notes": "Senior living",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/winter-hill-senior-apartments-falls-church-va/shb2ky7/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Glen",
@@ -685,7 +710,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-glen-falls-church-va/ppkqyrr/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Merrill House Apartments",
@@ -701,7 +727,8 @@
     "notes": "Downtown FC",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/merrill-house-apartments-falls-church-va/j76ch66/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Broad & Washington",
@@ -717,7 +744,8 @@
     "notes": "Downtown FC",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/broad-washington-falls-church-va/1tf0de7/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Read Building",
@@ -733,7 +761,8 @@
     "notes": "Downtown FC",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/read-building-falls-church-va/s4fnqe6/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Modera Founders Row",
@@ -749,7 +778,8 @@
     "notes": "New development",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/modera-founders-row-falls-church-va/m8rvlkj/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cortland at Falls Church",
@@ -765,7 +795,8 @@
     "notes": "Near FC City",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cortland-at-falls-church-falls-church-va/bfkfw3b/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Falls Green",
@@ -781,23 +812,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/falls-green-falls-church-va/87bv9x3/",
-    "verified": true
-  },
-  {
-    "name": "The Jefferson",
-    "address": "6166 Leesburg Pike, Falls Church, VA 22044",
-    "area": "Seven Corners",
-    "county": "Fairfax",
-    "region": "NoVA",
-    "lat": 38.852,
-    "lng": -77.1456,
-    "est_units": 200,
-    "type": "garden",
-    "community_room": "Unknown",
-    "notes": "Eagle Rock Community",
-    "status": "Not Contacted",
-    "source": "https://www.apartments.com/the-jefferson-an-eagle-rock-community-falls-church-va/g06clwy/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cavalier Club",
@@ -813,23 +829,8 @@
     "notes": "Near Seven Corners",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cavalier-club-falls-church-va/1rwyx84/",
-    "verified": true
-  },
-  {
-    "name": "Munson Hill",
-    "address": "6129 Leesburg Pike, Falls Church, VA 22041",
-    "area": "Seven Corners",
-    "county": "Fairfax",
-    "region": "NoVA",
-    "lat": 38.8524,
-    "lng": -77.1441,
-    "est_units": 150,
-    "type": "garden",
-    "community_room": "Unknown",
-    "notes": "Near Seven Corners",
-    "status": "Not Contacted",
-    "source": "https://www.apartments.com/munson-hill-falls-church-va/gvztmdx/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "LOREN",
@@ -845,7 +846,8 @@
     "notes": "Near Seven Corners",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/loren-falls-church-va/dprpfzj/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Willows Apartment Homes",
@@ -861,7 +863,8 @@
     "notes": "Garden-style",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-willows-apartment-homes-annandale-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Briarwood Apartments",
@@ -877,7 +880,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/briarwood-apartments-annandale-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Yorktown Apartments",
@@ -893,7 +897,8 @@
     "notes": "Near Little River Tpk",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/yorktown-apartments-annandale-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Parliaments",
@@ -909,7 +914,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/parliaments-annandale-va/gf20x5z/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Ravensworth",
@@ -925,7 +931,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/ravensworth-annandale-va/tjspdd9/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Vistas of Annandale",
@@ -941,7 +948,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/vistas-of-annandale-annandale-va/gp3b49w/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Monticello Falls Church",
@@ -957,7 +965,8 @@
     "notes": "Large garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/monticello-falls-church-falls-church-va/thlsc09/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Coralain Gardens",
@@ -973,7 +982,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/coralain-gardens-falls-church-va/5ltbntp/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Fairfield Crossing Apartments",
@@ -989,7 +999,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/fairfield-crossing-apartments-falls-church-va/9gdnnt5/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Kingsley Commons Townhouses",
@@ -1005,7 +1016,8 @@
     "notes": "Townhome community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/kingsley-commons-townhouses-falls-church-va/098ef62/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Cardinal Forest",
@@ -1021,7 +1033,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/cardinal-forest-springfield-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Eagle Rock at West Springfield",
@@ -1037,7 +1050,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/eagle-rock-apartments-at-west-springfield-springfield-va/p4m334t/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "ReNew Springfield",
@@ -1053,7 +1067,8 @@
     "notes": "Renovated garden",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/renew-springfield-springfield-va/wwvg0zj/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Arden",
@@ -1069,7 +1084,8 @@
     "notes": "Near Springfield TC",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-arden-springfield-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "Burke Shire Commons",
@@ -1085,7 +1101,8 @@
     "notes": "Garden community",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/burke-shire-commons-burke-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   },
   {
     "name": "The Cove at Bridgewater",
@@ -1101,6 +1118,7 @@
     "notes": "College town",
     "status": "Not Contacted",
     "source": "https://www.apartments.com/the-cove-at-bridgewater-bridgewater-va/",
-    "verified": true
+    "verified": true,
+    "in_district": true
   }
 ]
