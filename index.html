@@ -273,6 +273,68 @@
             z-index: 9999;
         }
         .loading.hidden { display: none; }
+        /* Donor Filter Panel */
+        .donor-filter-bar {
+            background: #edf2f7;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .donor-filter-bar label { font-weight: 600; font-size: 0.85rem; color: var(--primary); white-space: nowrap; }
+        .donor-filter-bar select, .donor-filter-bar input {
+            padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;
+        }
+        .donor-filter-bar .donor-count {
+            font-size: 0.85rem; color: var(--text-muted); margin-left: auto;
+        }
+        /* Donor Side Panel */
+        .donor-panel {
+            position: fixed; top: 0; right: -420px; width: 420px; height: 100vh;
+            background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 2000; transition: right 0.3s ease; display: flex; flex-direction: column;
+        }
+        .donor-panel.open { right: 0; }
+        .donor-panel-header {
+            padding: 16px 20px; background: var(--primary); color: white;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .donor-panel-header h3 { font-size: 1rem; }
+        .donor-panel-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .donor-panel-actions {
+            padding: 12px 20px; border-bottom: 1px solid var(--border);
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .donor-panel-actions .btn { font-size: 0.8rem; padding: 6px 12px; }
+        .btn-warning { background: #d69e2e; color: white; }
+        .btn-warning:hover { background: #b7791f; }
+        .donor-list {
+            flex: 1; overflow-y: auto; padding: 0;
+        }
+        .donor-list table { font-size: 0.8rem; width: 100%; }
+        .donor-list th { position: sticky; top: 0; font-size: 0.75rem; padding: 8px 10px; }
+        .donor-list td { padding: 6px 10px; font-size: 0.8rem; }
+        .donor-panel-footer {
+            padding: 12px 20px; border-top: 1px solid var(--border);
+            font-size: 0.8rem; color: var(--text-muted); text-align: center;
+        }
+        .donor-panel-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3); z-index: 1999;
+        }
+        .donor-panel-overlay.open { display: block; }
+        /* Donor highlight on map */
+        .donor-building-highlight {
+            border: 3px solid #d69e2e !important;
+            background: #d69e2e !important;
+            animation: donor-pulse 1.5s infinite;
+        }
+        @keyframes donor-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(214,158,46,0.5); }
+            50% { box-shadow: 0 0 0 10px rgba(214,158,46,0); }
+        }
         .spinner {
             width: 48px;
             height: 48px;
@@ -308,6 +370,10 @@
                 <div class="label">Est. Units</div>
             </div>
             <div class="header-stat">
+                <div class="num" id="stat-voters">—</div>
+                <div class="label">Est. Voters</div>
+            </div>
+            <div class="header-stat">
                 <div class="num" id="stat-contacted">—</div>
                 <div class="label">Contacted</div>
             </div>
@@ -318,11 +384,55 @@
         </div>
     </div>
 
+    <!-- Donor Filter Bar -->
+    <div class="donor-filter-bar" id="donor-filter-bar" style="display:none">
+        <label>🎯 Donor Filter:</label>
+        <select id="donor-recipient-filter">
+            <option value="">Select a recipient...</option>
+        </select>
+        <input type="text" id="donor-search" placeholder="Search donors by name..." style="min-width:180px">
+        <button class="btn btn-primary" onclick="openDonorPanel()" style="font-size:0.8rem;padding:6px 12px">
+            👥 View Donor List
+        </button>
+        <button class="btn btn-outline" onclick="clearDonorFilter()" style="font-size:0.8rem;padding:6px 12px">
+            ✕ Clear Filter
+        </button>
+        <span class="donor-count" id="donor-count-badge"></span>
+    </div>
+
     <!-- Tabs -->
     <div class="tabs">
         <div class="tab active" data-tab="map">🗺️ Map</div>
         <div class="tab" data-tab="list">📋 List <span class="count-badge" id="list-count"></span></div>
         <div class="tab" data-tab="residents">👥 Residents</div>
+    </div>
+
+    <!-- Donor Side Panel -->
+    <div class="donor-panel-overlay" id="donor-overlay" onclick="closeDonorPanel()"></div>
+    <div class="donor-panel" id="donor-panel">
+        <div class="donor-panel-header">
+            <h3 id="donor-panel-title">Donors</h3>
+            <button class="donor-panel-close" onclick="closeDonorPanel()">×</button>
+        </div>
+        <div class="donor-panel-actions">
+            <button class="btn btn-primary" onclick="exportDonorCSV()">📥 Export CSV</button>
+            <button class="btn btn-warning" onclick="searchDonorContacts()">🔍 Search LinkedIn/Email/Phone</button>
+        </div>
+        <div class="donor-list" id="donor-list-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Building</th>
+                        <th>Employer</th>
+                        <th>Total $</th>
+                        <th># Gifts</th>
+                    </tr>
+                </thead>
+                <tbody id="donor-list-body"></tbody>
+            </table>
+        </div>
+        <div class="donor-panel-footer" id="donor-panel-footer"></div>
     </div>
 
     <!-- Map Tab -->
@@ -770,9 +880,13 @@
     // ============================================================
     function updateStats() {
         const inDistrict = apartments.filter(a => a.in_district !== false);
+        const totalUnits = inDistrict.reduce((sum, a) => sum + (a.est_units || 0), 0);
+        const estVoters = Math.round(totalUnits * ADULTS_PER_UNIT * VOTER_REG_RATE);
         document.getElementById('stat-total').textContent = inDistrict.length;
         document.getElementById('stat-units').textContent = 
-            (inDistrict.reduce((sum, a) => sum + (a.est_units || 0), 0) / 1000).toFixed(1) + 'k';
+            (totalUnits / 1000).toFixed(1) + 'k';
+        document.getElementById('stat-voters').textContent = 
+            (estVoters / 1000).toFixed(1) + 'k';
         document.getElementById('stat-contacted').textContent = 
             inDistrict.filter(a => ['Contacted','Scheduled','Canvassed'].includes(a.status)).length;
         document.getElementById('stat-canvassed').textContent = 
@@ -898,9 +1012,245 @@
     }
 
     // ============================================================
+    // VOTER ESTIMATE
+    // ============================================================
+    // ~1.7 adults per unit avg in VA multifamily, ~65% voter registration rate
+    const ADULTS_PER_UNIT = 1.7;
+    const VOTER_REG_RATE = 0.65;
+
+    // ============================================================
+    // DONOR DATA
+    // ============================================================
+    let donorData = null;
+    let activeDonorFilter = null;
+
+    async function loadDonorData() {
+        try {
+            const resp = await fetch('data/donors.json');
+            if (!resp.ok) return;
+            donorData = await resp.json();
+            console.log(`Loaded ${donorData.donors?.length || 0} donor records`);
+            initDonorUI();
+        } catch (e) {
+            console.log('No donor data found (data/donors.json). Donor features disabled.');
+        }
+    }
+
+    function initDonorUI() {
+        if (!donorData || !donorData.donors || donorData.donors.length === 0) return;
+
+        // Show the filter bar
+        document.getElementById('donor-filter-bar').style.display = 'flex';
+
+        // Populate recipient dropdown
+        const recipients = {};
+        donorData.donors.forEach(d => {
+            const r = d.recipient || 'Unknown';
+            if (!recipients[r]) recipients[r] = 0;
+            recipients[r]++;
+        });
+        const select = document.getElementById('donor-recipient-filter');
+        Object.entries(recipients)
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([name, count]) => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = `${name} (${count} donors)`;
+                select.appendChild(opt);
+            });
+
+        // Event listeners
+        select.addEventListener('change', applyDonorFilter);
+        document.getElementById('donor-search').addEventListener('input', 
+            debounce(() => { if (activeDonorFilter) renderDonorPanel(); }, 300));
+    }
+
+    function debounce(fn, ms) {
+        let t;
+        return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    }
+
+    function applyDonorFilter() {
+        const recipient = document.getElementById('donor-recipient-filter').value;
+        if (!recipient) { clearDonorFilter(); return; }
+
+        activeDonorFilter = recipient;
+
+        // Find which apartments have donors for this recipient
+        const donorsByApt = {};
+        donorData.donors.forEach(d => {
+            if (d.recipient !== recipient) return;
+            const aptName = d.apartment || d.building || 'Unknown';
+            if (!donorsByApt[aptName]) donorsByApt[aptName] = [];
+            donorsByApt[aptName].push(d);
+        });
+
+        // Highlight buildings on map
+        const matchedAptNames = new Set(Object.keys(donorsByApt));
+        markerClusterGroup.clearLayers();
+        apartments.forEach((apt, idx) => {
+            if (!apt.lat || !apt.lng) return;
+            const isDonorBuilding = matchedAptNames.has(apt.name);
+            const color = isDonorBuilding ? '#d69e2e' : (STATUS_COLORS[apt.status] || '#a0aec0');
+            const size = isDonorBuilding ? 18 : 12;
+            const icon = L.divIcon({
+                html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);${isDonorBuilding ? 'animation:donor-pulse 1.5s infinite;' : ''}"></div>`,
+                className: '',
+                iconSize: [size + 4, size + 4],
+                iconAnchor: [(size + 4) / 2, (size + 4) / 2]
+            });
+            const marker = L.marker([apt.lat, apt.lng], { icon });
+            const donorCount = donorsByApt[apt.name]?.length || 0;
+            const donorInfo = isDonorBuilding
+                ? `<div class="popup-detail" style="color:#d69e2e;font-weight:700;margin-top:6px">🎯 ${donorCount} donor${donorCount !== 1 ? 's' : ''} to ${esc(recipient)}</div>`
+                : '';
+            const srcUrl = safeUrl(apt.source);
+            marker.bindPopup(`
+                <div class="popup-title">${esc(apt.name)}</div>
+                <div class="popup-detail"><strong>Address:</strong> ${esc(apt.address)}</div>
+                <div class="popup-detail"><strong>Est. Units:</strong> ${esc(apt.est_units) || 'Unknown'}</div>
+                ${donorInfo}
+            `);
+            markerClusterGroup.addLayer(marker);
+        });
+
+        // Update badge
+        const totalDonors = Object.values(donorsByApt).reduce((s, arr) => s + arr.length, 0);
+        document.getElementById('donor-count-badge').textContent = 
+            `${totalDonors} donors across ${matchedAptNames.size} buildings`;
+    }
+
+    function clearDonorFilter() {
+        activeDonorFilter = null;
+        document.getElementById('donor-recipient-filter').value = '';
+        document.getElementById('donor-search').value = '';
+        document.getElementById('donor-count-badge').textContent = '';
+        addMarkers(); // Restore normal markers
+        closeDonorPanel();
+    }
+
+    function getFilteredDonors() {
+        if (!donorData || !activeDonorFilter) return [];
+        const search = (document.getElementById('donor-search').value || '').toLowerCase();
+        return donorData.donors.filter(d => {
+            if (d.recipient !== activeDonorFilter) return false;
+            if (search && !(d.name || '').toLowerCase().includes(search) 
+                && !(d.apartment || d.building || '').toLowerCase().includes(search)
+                && !(d.employer || '').toLowerCase().includes(search)) return false;
+            return true;
+        });
+    }
+
+    function openDonorPanel() {
+        renderDonorPanel();
+        document.getElementById('donor-panel').classList.add('open');
+        document.getElementById('donor-overlay').classList.add('open');
+    }
+
+    function closeDonorPanel() {
+        document.getElementById('donor-panel').classList.remove('open');
+        document.getElementById('donor-overlay').classList.remove('open');
+    }
+
+    function renderDonorPanel() {
+        const donors = getFilteredDonors();
+        const tbody = document.getElementById('donor-list-body');
+        
+        document.getElementById('donor-panel-title').textContent = 
+            `${activeDonorFilter || 'All'} Donors (${donors.length})`;
+
+        tbody.innerHTML = donors.map(d => `
+            <tr>
+                <td><strong>${esc(d.name)}</strong></td>
+                <td>${esc(d.apartment || d.building || '—')}</td>
+                <td>${esc(d.employer || '—')}</td>
+                <td>$${(d.total_amount || d.amount || 0).toLocaleString()}</td>
+                <td>${d.num_contributions || 1}</td>
+            </tr>
+        `).join('');
+
+        const total = donors.reduce((s, d) => s + (d.total_amount || d.amount || 0), 0);
+        document.getElementById('donor-panel-footer').textContent = 
+            `${donors.length} donors · $${total.toLocaleString()} total contributions`;
+    }
+
+    function exportDonorCSV() {
+        const donors = getFilteredDonors();
+        const headers = ['Name', 'Building', 'Address', 'Employer', 'Occupation', 'Total Amount', '# Contributions', 'Last Date'];
+        const rows = donors.map(d => [
+            d.name, d.apartment || d.building || '', d.street || d.address || '',
+            d.employer || '', d.occupation || '',
+            d.total_amount || d.amount || 0, d.num_contributions || 1, d.date || ''
+        ]);
+        const csv = [headers, ...rows].map(r =>
+            r.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')
+        ).join('\n');
+        downloadFile(`donors-${(activeDonorFilter || 'all').replace(/[^a-z0-9]/gi, '_')}.csv`, csv, 'text/csv');
+    }
+
+    function searchDonorContacts() {
+        const donors = getFilteredDonors();
+        if (!donors.length) { alert('No donors to search.'); return; }
+        
+        // Build a search-friendly format and open in new tab
+        const names = donors.map(d => d.name).filter(Boolean);
+        const uniqueNames = [...new Set(names)];
+        
+        // Create a search helper page
+        const html = `<!DOCTYPE html>
+<html><head><title>Donor Contact Search — ${esc(activeDonorFilter || 'All')}</title>
+<style>
+    body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #1a365d; } h2 { color: #2b6cb0; margin-top: 24px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th { background: #1a365d; color: white; padding: 8px 12px; text-align: left; }
+    td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+    .search-links a { display: inline-block; margin: 4px 8px 4px 0; padding: 4px 12px;
+        background: #edf2f7; border-radius: 4px; text-decoration: none; color: #2b6cb0; font-size: 0.85rem; }
+    .search-links a:hover { background: #bee3f8; }
+    .btn { padding: 8px 16px; background: #1a365d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin: 4px; }
+    .btn:hover { background: #2b6cb0; }
+    .copy-btn { background: #38a169; }
+</style></head><body>
+<h1>🔍 Donor Contact Search</h1>
+<p>${uniqueNames.length} unique donors to <strong>${esc(activeDonorFilter)}</strong> in VA-7 apartment buildings.</p>
+<p><button class="btn copy-btn" onclick="copyAll()">📋 Copy All Names</button>
+<button class="btn" onclick="openAllLinkedIn()">🔗 Open All in LinkedIn</button></p>
+<h2>Individual Search Links</h2>
+<table><thead><tr><th>Name</th><th>Building</th><th>Search</th></tr></thead><tbody>
+${donors.map(d => {
+    const name = esc(d.name || '');
+    const building = esc(d.apartment || d.building || '');
+    const q = encodeURIComponent(d.name || '');
+    return '<tr><td><strong>' + name + '</strong></td><td>' + building + '</td><td class="search-links">' +
+        '<a href="https://www.linkedin.com/search/results/all/?keywords=' + q + '" target="_blank">LinkedIn</a>' +
+        '<a href="https://www.google.com/search?q=' + q + '+virginia+email+OR+phone" target="_blank">Google</a>' +
+        '<a href="https://www.truepeoplesearch.com/results?name=' + q + '&citystatezip=Virginia" target="_blank">TruePeople</a>' +
+        '</td></tr>';
+}).join('')}
+</tbody></table>
+<script>
+function copyAll() {
+    const names = ${JSON.stringify(uniqueNames)};
+    navigator.clipboard.writeText(names.join('\\n')).then(() => alert('Copied ' + names.length + ' names!'));
+}
+function openAllLinkedIn() {
+    if(!confirm('Open LinkedIn search for all ' + ${uniqueNames.length} + ' donors? This will open many tabs.')) return;
+    ${JSON.stringify(uniqueNames)}.forEach(n => window.open('https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(n)));
+}
+</script></body></html>`;
+        
+        const blob = new Blob([html], { type: 'text/html' });
+        window.open(URL.createObjectURL(blob), '_blank');
+    }
+
+    // ============================================================
     // INIT ON LOAD
     // ============================================================
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', async () => {
+        await init();
+        await loadDonorData();
+    });
     </script>
 </body>
 </html>
