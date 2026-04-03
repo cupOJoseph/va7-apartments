@@ -70,7 +70,7 @@
   {
     "name": "APARTMENTS - NO NAME",
     "address": "700 N WAYNE ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.882892,
@@ -461,7 +461,7 @@
   {
     "name": "WASHINGTON-LEE APTS (PART)",
     "address": "100 N WAYNE ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.877699,
@@ -563,7 +563,7 @@
   {
     "name": "BALLSTON PARK",
     "address": "309 N PIEDMONT ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.875419,
@@ -580,7 +580,7 @@
   {
     "name": "CULPEPPER GARDEN I, INC.",
     "address": "4435 N PERSHING DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.870443,
@@ -954,7 +954,7 @@
   {
     "name": "MADISON AT BALLSTON STATION BLDNG B",
     "address": "4401 4th ST N, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.871519,
@@ -971,7 +971,7 @@
   {
     "name": "MODERA CLARENDON APARTMENTS",
     "address": "3415 WASHINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.886182,
@@ -1243,7 +1243,7 @@
   {
     "name": "4501 ARLINGTON BLVD",
     "address": "4501 ARLINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.869702,
@@ -1362,7 +1362,7 @@
   {
     "name": "100 N TRENTON ST",
     "address": "100 N TRENTON ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.87147,
@@ -1379,7 +1379,7 @@
   {
     "name": "MADISON AT BALLSTON STATION BLDNG A",
     "address": "4400 4th ST N, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.871082,
@@ -1736,7 +1736,7 @@
   {
     "name": "2201 PERSHING",
     "address": "2201 N PERSHING DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.881059,
@@ -1753,7 +1753,7 @@
   {
     "name": "GATES OF BALLSTON",
     "address": "309 N THOMAS ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.874348,
@@ -2008,7 +2008,7 @@
   {
     "name": "218 N GLEBE RD",
     "address": "218 N GLEBE RD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.872084,
@@ -2025,7 +2025,7 @@
   {
     "name": "Terwilliger Place",
     "address": "3445 WASHINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.886497,
@@ -2042,7 +2042,7 @@
   {
     "name": "2401 ARLINGTON BLVD",
     "address": "2401 ARLINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.874683,
@@ -2127,7 +2127,7 @@
   {
     "name": "WESTOVER APTS",
     "address": "1410 PATRICK HENRY DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.884789,
@@ -2229,7 +2229,7 @@
   {
     "name": "BUCKINGHAM COMMONS VILLAGE 3",
     "address": "307 N GEORGE MASON DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.872407,
@@ -2263,7 +2263,7 @@
   {
     "name": "100 N GEORGE MASON DR",
     "address": "100 N GEORGE MASON DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.870383,
@@ -2348,7 +2348,7 @@
   {
     "name": "SUNRISE AT BLUEMONT",
     "address": "5900 WILSON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.873475,
@@ -2467,7 +2467,7 @@
   {
     "name": "100 N BEDFORD ST",
     "address": "100 N BEDFORD ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.875892,
@@ -2501,7 +2501,7 @@
   {
     "name": "BALLSTON PARK",
     "address": "200 N PIEDMONT ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.873547,
@@ -2637,7 +2637,7 @@
   {
     "name": "PATRICK HENRY APTS",
     "address": "6152 WILSON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.872555,
@@ -2858,7 +2858,7 @@
   {
     "name": "The Cadence",
     "address": "4333 ARLINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.870231,
@@ -3249,7 +3249,7 @@
   {
     "name": "3515 WASHINGTON BLVD",
     "address": "3515 WASHINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.886542,
@@ -3334,7 +3334,7 @@
   {
     "name": "MYERTON RESIDENTIAL",
     "address": "108 S COURTHOUSE RD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.872061,
@@ -3419,7 +3419,7 @@
   {
     "name": "WHITEFIELD COMMONS",
     "address": "100 N THOMAS ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.870632,
@@ -3623,7 +3623,7 @@
   {
     "name": "Mary Marshall Assisted Living",
     "address": "2000 5th ST S, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.86984,
@@ -3861,7 +3861,7 @@
   {
     "name": "APARTMENTS - NO NAME",
     "address": "1111 N KENSINGTON ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.880968,
@@ -4099,7 +4099,7 @@
   {
     "name": "KNIGHTSBRIDGE APTS",
     "address": "210 N GLEBE RD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.872291,
@@ -4116,7 +4116,7 @@
   {
     "name": "WESTOVER HILLS APTS.",
     "address": "1519 N LANCASTER ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.88478,
@@ -4133,7 +4133,7 @@
   {
     "name": "FISHER HOUSE II",
     "address": "5701 10th RD N, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.880195,
@@ -4337,7 +4337,7 @@
   {
     "name": "FISHER HOUSE I",
     "address": "1111 N KENILWORTH ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.882681,
@@ -4405,7 +4405,7 @@
   {
     "name": "BEDFORD GARDENS APTS",
     "address": "35 N BEDFORD ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.876254,
@@ -4490,7 +4490,7 @@
   {
     "name": "EVELYN STUART APTS",
     "address": "520 S COURTHOUSE RD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.869161,
@@ -4609,7 +4609,7 @@
   {
     "name": "CONNER APTS",
     "address": "1401 N KENILWORTH ST, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.883932,
@@ -4796,7 +4796,7 @@
   {
     "name": "FISHER HOUSE II",
     "address": "5705 WASHINGTON BLVD, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.883617,
@@ -4932,7 +4932,7 @@
   {
     "name": "WALTER REED APTS",
     "address": "500 S WALTER REED DR, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.868404,
@@ -4966,7 +4966,7 @@
   {
     "name": "WESTOVER COURTS APTS",
     "address": "5740 16th ST N, Arlington, VA",
-    "area": " ",
+    "area": "Arlington",
     "county": "Arlington",
     "region": "NoVA",
     "lat": 38.88567,
