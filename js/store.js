@@ -98,6 +98,7 @@ const Store = (() => {
     const q = search.toLowerCase();
 
     return _apartments.filter((apt) => {
+      if (apt.in_district === false || apt.in_district === 0) return false;
       if (q && !`${apt.name} ${apt.address} ${apt.area} ${apt.notes}`.toLowerCase().includes(q)) return false;
       if (area && apt.area !== area) return false;
       if (region && apt.region !== region) return false;
@@ -125,7 +126,7 @@ const Store = (() => {
   }
 
   function getStats() {
-    const inDistrict = _apartments.filter((a) => a.in_district !== false);
+    const inDistrict = _apartments.filter((a) => a.in_district !== false && a.in_district !== 0);
     const totalUnits = inDistrict.reduce((sum, a) => sum + (a.est_units || 0), 0);
     const estVoters = Math.round(totalUnits * CONFIG.ADULTS_PER_UNIT * CONFIG.VOTER_REG_RATE);
 
@@ -139,7 +140,11 @@ const Store = (() => {
   }
 
   function getUniqueAreas() {
-    return [...new Set(_apartments.map((a) => a.area))].sort();
+    return [...new Set(
+      _apartments
+        .filter((a) => a.in_district !== false && a.in_district !== 0)
+        .map((a) => a.area)
+    )].sort();
   }
 
   // ── Donors ────────────────────────────────────────────────────

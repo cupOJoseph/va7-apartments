@@ -15,7 +15,7 @@ const TableView = (() => {
     const tbody = document.getElementById('apt-table-body');
     tbody.innerHTML = sorted.map((apt) => {
       const idx = apartments.indexOf(apt);
-      const rowClass = apt.in_district === false ? 'out-of-district' : '';
+      const rowClass = '';
       const srcLink = safeUrl(apt.source);
       const statusOptions = CONFIG.STATUSES.map(
         (s) => `<option value="${s}" ${apt.status === s ? 'selected' : ''}>${s}</option>`
@@ -53,7 +53,7 @@ const TableView = (() => {
 
     const resAptSelect = document.getElementById('resident-filter-apt');
     Store.getApartments()
-      .filter((a) => a.in_district !== false)
+      .filter((a) => a.in_district !== false && a.in_district !== 0)
       .forEach((apt) => {
         const opt = document.createElement('option');
         opt.value = apt.name;
