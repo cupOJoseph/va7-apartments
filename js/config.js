@@ -37,6 +37,7 @@ const CONFIG = Object.freeze({
 
   // Data paths
   DATA: {
+    DATABASE: 'data/va7.db',
     APARTMENTS: 'data/apartments.json',
     BOUNDARY: 'data/va7-boundary.geojson',
     DONORS: 'data/donors.json',

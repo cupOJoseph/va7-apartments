@@ -1,7 +1,8 @@
 /**
  * VA-7 Apartment Dashboard — Data Store
  *
- * Central state management for apartments, donor data, and SQL database.
+ * Loads pre-built SQLite database and provides query interface.
+ * Falls back to JSON if .db file unavailable.
  */
 
 'use strict';
@@ -16,21 +17,63 @@ const Store = (() => {
   // ── Data Loading ──────────────────────────────────────────────
 
   async function loadAll() {
-    const [aptResp, boundaryResp] = await Promise.all([
-      fetch(CONFIG.DATA.APARTMENTS),
-      fetch(CONFIG.DATA.BOUNDARY),
-    ]);
+    // Init sql.js
+    const SQL = await initSqlJs({
+      locateFile: (file) => `${CONFIG.SQLJS_CDN}/${file}`,
+    });
 
-    _apartments = await aptResp.json();
-    const boundary = await boundaryResp.json();
+    // Try loading pre-built DB, fall back to JSON
+    let boundary;
+    try {
+      const [dbResp, boundaryResp] = await Promise.all([
+        fetch(CONFIG.DATA.DATABASE),
+        fetch(CONFIG.DATA.BOUNDARY),
+      ]);
+
+      if (dbResp.ok) {
+        const buf = await dbResp.arrayBuffer();
+        _db = new SQL.Database(new Uint8Array(buf));
+        _apartments = _queryApartments();
+        console.log(`✅ Loaded DB: ${_apartments.length} apartments`);
+      } else {
+        throw new Error('DB not found, falling back to JSON');
+      }
+
+      boundary = await boundaryResp.json();
+    } catch (e) {
+      console.warn('DB load failed, using JSON fallback:', e.message);
+      const [aptResp, boundaryResp] = await Promise.all([
+        fetch(CONFIG.DATA.APARTMENTS),
+        fetch(CONFIG.DATA.BOUNDARY),
+      ]);
+      _apartments = await aptResp.json();
+      boundary = await boundaryResp.json();
+
+      // Build in-memory DB from JSON
+      _db = new SQL.Database();
+      _createSchema();
+      _insertApartmentsFromJSON();
+    }
 
     _restoreStatuses();
-    await _initSQL();
 
     return { apartments: _apartments, boundary };
   }
 
   async function loadDonors() {
+    // If DB has donors, use those
+    if (_db) {
+      try {
+        const result = _db.exec('SELECT COUNT(*) FROM donors');
+        const count = result[0]?.values[0][0] || 0;
+        if (count > 0) {
+          _donorData = { donors: _queryDonors() };
+          return _donorData;
+        }
+      } catch { /* table may not exist in JSON fallback */ }
+    }
+
+    // Otherwise load from JSON
     try {
       const resp = await fetch(CONFIG.DATA.DONORS);
       if (!resp.ok) return null;
@@ -67,11 +110,13 @@ const Store = (() => {
   function updateStatus(idx, newStatus) {
     _apartments[idx].status = newStatus;
 
+    // Persist to localStorage
     const saved = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || '{}');
     const key = _apartments[idx].name + '|' + _apartments[idx].address;
     saved[key] = newStatus;
     localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(saved));
 
+    // Update in-memory DB
     if (_db) {
       _db.run('UPDATE apartments SET status = ? WHERE name = ? AND address = ?', [
         newStatus, _apartments[idx].name, _apartments[idx].address,
@@ -168,7 +213,41 @@ const Store = (() => {
     });
   }
 
-  // ── Private ───────────────────────────────────────────────────
+  // ── Raw SQL (for advanced users / SQL tab) ────────────────────
+
+  function query(sql) {
+    if (!_db) throw new Error('Database not loaded');
+    return _db.exec(sql);
+  }
+
+  // ── Private: DB Queries ───────────────────────────────────────
+
+  function _queryApartments() {
+    const results = _db.exec('SELECT * FROM apartments ORDER BY name');
+    if (!results.length) return [];
+    const cols = results[0].columns;
+    return results[0].values.map((row) => {
+      const obj = {};
+      cols.forEach((c, i) => { obj[c] = row[i]; });
+      obj.in_district = obj.in_district !== 0;
+      obj.verified = obj.verified !== 0;
+      return obj;
+    });
+  }
+
+  function _queryDonors() {
+    const results = _db.exec('SELECT * FROM donors ORDER BY total_amount DESC');
+    if (!results.length) return [];
+    const cols = results[0].columns;
+    return results[0].values.map((row) => {
+      const obj = {};
+      cols.forEach((c, i) => { obj[c] = row[i]; });
+      obj.in_va7 = obj.in_va7 !== 0;
+      return obj;
+    });
+  }
+
+  // ── Private: Status Restore ───────────────────────────────────
 
   function _restoreStatuses() {
     const saved = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || '{}');
@@ -178,41 +257,30 @@ const Store = (() => {
     });
   }
 
-  async function _initSQL() {
-    const SQL = await initSqlJs({
-      locateFile: (file) => `${CONFIG.SQLJS_CDN}/${file}`,
-    });
-    _db = new SQL.Database();
+  // ── Private: JSON Fallback Schema ─────────────────────────────
 
+  function _createSchema() {
     _db.run(`
       CREATE TABLE IF NOT EXISTS apartments (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL, address TEXT, area TEXT, county TEXT, region TEXT,
         lat REAL, lng REAL, est_units INTEGER, type TEXT, community_room TEXT,
         contact_info TEXT, notes TEXT, status TEXT DEFAULT 'Not Contacted',
-        in_district BOOLEAN DEFAULT 1, precinct TEXT
+        source TEXT, verified INTEGER DEFAULT 0, in_district INTEGER DEFAULT 1, precinct TEXT
       )
     `);
-    _db.run(`
-      CREATE TABLE IF NOT EXISTS residents (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT, address TEXT, apartment_id INTEGER REFERENCES apartments(id),
-        employer TEXT, occupation TEXT, contribution_amount REAL,
-        contribution_date TEXT, recipient TEXT, party TEXT, fec_filing_id TEXT
-      )
-    `);
-    _db.run('CREATE INDEX IF NOT EXISTS idx_res_apt ON residents(apartment_id)');
-    _db.run('CREATE INDEX IF NOT EXISTS idx_apt_area ON apartments(area)');
-    _db.run('CREATE INDEX IF NOT EXISTS idx_apt_status ON apartments(status)');
+  }
 
+  function _insertApartmentsFromJSON() {
     _apartments.forEach((apt) => {
       _db.run(
         `INSERT INTO apartments (name,address,area,county,region,lat,lng,est_units,type,
-         community_room,contact_info,notes,status,in_district,precinct)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         community_room,contact_info,notes,status,source,verified,in_district,precinct)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [apt.name, apt.address, apt.area, apt.county, apt.region, apt.lat, apt.lng,
          apt.est_units, apt.type, apt.community_room, apt.contact_info || '',
-         apt.notes, apt.status, apt.in_district ? 1 : 0, apt.precinct || ''],
+         apt.notes, apt.status, apt.source || '', apt.verified ? 1 : 0,
+         apt.in_district === false ? 0 : 1, apt.precinct || ''],
       );
     });
   }
@@ -220,7 +288,7 @@ const Store = (() => {
   // ── Public API ────────────────────────────────────────────────
 
   return {
-    loadAll, loadDonors,
+    loadAll, loadDonors, query,
     getApartments, getFilteredApartments, updateStatus, getStats, getUniqueAreas,
     getDonorData, getDonorRecipients, getDonorsByRecipient, getDonorBuildingMap,
     getSort, toggleSort, sortArray,
