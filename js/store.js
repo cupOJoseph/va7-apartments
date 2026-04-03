@@ -11,8 +11,8 @@ const Store = (() => {
   let _apartments = [];
   let _donorData = null;
   let _db = null;
-  let _sortCol = 'name';
-  let _sortDir = 1;
+  let _sortCol = 'est_units';
+  let _sortDir = -1;
 
   // ── Data Loading ──────────────────────────────────────────────
 
