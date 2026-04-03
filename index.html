@@ -1229,16 +1229,16 @@ ${donors.map(d => {
         '</td></tr>';
 }).join('')}
 </tbody></table>
-<script>
+<scr' + 'ipt>
 function copyAll() {
     const names = ${JSON.stringify(uniqueNames)};
-    navigator.clipboard.writeText(names.join('\\n')).then(() => alert('Copied ' + names.length + ' names!'));
+    navigator.clipboard.writeText(names.join("\\n")).then(() => alert("Copied " + names.length + " names!"));
 }
 function openAllLinkedIn() {
-    if(!confirm('Open LinkedIn search for all ' + ${uniqueNames.length} + ' donors? This will open many tabs.')) return;
-    ${JSON.stringify(uniqueNames)}.forEach(n => window.open('https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(n)));
+    if(!confirm("Open LinkedIn search for all " + ${uniqueNames.length} + " donors? This will open many tabs.")) return;
+    ${JSON.stringify(uniqueNames)}.forEach(n => window.open("https://www.linkedin.com/search/results/all/?keywords=" + encodeURIComponent(n)));
 }
-</script></body></html>`;
+</scr' + 'ipt></body></html>`;
         
         const blob = new Blob([html], { type: 'text/html' });
         window.open(URL.createObjectURL(blob), '_blank');
