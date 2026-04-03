@@ -51,10 +51,9 @@ const MapView = (() => {
 
     apartments.forEach((apt, idx) => {
       if (!apt.lat || !apt.lng) return;
+      if (apt.in_district === false || apt.in_district === 0) return;
 
-      const color = apt.in_district === false
-        ? CONFIG.OUT_OF_DISTRICT_COLOR
-        : (CONFIG.STATUS_COLORS[apt.status] || '#a0aec0');
+      const color = CONFIG.STATUS_COLORS[apt.status] || '#a0aec0';
 
       const marker = L.marker([apt.lat, apt.lng], {
         icon: _createMarkerIcon(color, 12),
@@ -72,6 +71,7 @@ const MapView = (() => {
 
     apartments.forEach((apt, idx) => {
       if (!apt.lat || !apt.lng) return;
+      if (apt.in_district === false || apt.in_district === 0) return;
 
       const isDonor = matchedNames.has(apt.name);
       const color = isDonor ? CONFIG.DONOR_HIGHLIGHT_COLOR : (CONFIG.STATUS_COLORS[apt.status] || '#a0aec0');
@@ -144,7 +144,7 @@ const MapView = (() => {
           ${statusOptions}
         </select>
       </div>
-      ${apt.in_district === false ? '<div class="popup-detail" style="color:#e53e3e;font-weight:700;margin-top:6px">⚠️ OUT OF DISTRICT</div>' : ''}
+      
     `;
   }
 
@@ -156,7 +156,7 @@ const MapView = (() => {
       Object.entries(CONFIG.STATUS_COLORS).forEach(([status, color]) => {
         div.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${status}</div>`;
       });
-      div.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${CONFIG.OUT_OF_DISTRICT_COLOR}"></div>Out of District</div>`;
+      // Out-of-district buildings are hidden from the map
       return div;
     };
     legend.addTo(_map);
