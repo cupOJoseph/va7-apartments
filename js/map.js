@@ -66,10 +66,9 @@ const MapView = (() => {
 
   // ── Private Helpers ───────────────────────────────────────────
 
-  function _createMarkerIcon(color, size, animate = false) {
-    const animStyle = animate ? 'animation:donor-pulse 1.5s infinite;' : '';
+  function _createMarkerIcon(color, size) {
     return L.divIcon({
-      html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);${animStyle}"></div>`,
+      html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
       className: '',
       iconSize: [size + 4, size + 4],
       iconAnchor: [(size + 4) / 2, (size + 4) / 2],
