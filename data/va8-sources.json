@@ -1,0 +1,23 @@
+{
+  "district": "Virginia 8th Congressional District (current)",
+  "sources": [
+    {
+      "source": "Arlington County Master Housing Unit Database",
+      "count": 313
+    },
+    {
+      "source": "City of Alexandria Buildings dataset",
+      "count": 393
+    },
+    {
+      "source": "Fairfax County Tax Administration parcel + legal-description data",
+      "count": 133
+    },
+    {
+      "source": "Existing manually verified Falls Church City apartment list",
+      "count": 11
+    }
+  ],
+  "total_apartments": 850,
+  "total_units": 142475
+}

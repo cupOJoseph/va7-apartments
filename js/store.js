@@ -1,5 +1,5 @@
 /**
- * VA-7 Apartment Dashboard — Data Store
+ * District 8 Apartments — Data Store
  *
  * Loads pre-built SQLite database and provides query interface.
  * Falls back to JSON if .db file unavailable.
@@ -9,7 +9,6 @@
 
 const Store = (() => {
   let _apartments = [];
-  let _donorData = null;
   let _db = null;
   let _sortCol = 'est_units';
   let _sortDir = -1;
@@ -58,33 +57,6 @@ const Store = (() => {
     _restoreStatuses();
 
     return { apartments: _apartments, boundary };
-  }
-
-  async function loadDonors() {
-    // If DB has donors, use those
-    if (_db) {
-      try {
-        const result = _db.exec('SELECT COUNT(*) FROM donors');
-        const count = result[0]?.values[0][0] || 0;
-        if (count > 0) {
-          _donorData = { donors: _queryDonors() };
-          return _donorData;
-        }
-      } catch { /* table may not exist in JSON fallback */ }
-    }
-
-    // Otherwise load from JSON
-    try {
-      const resp = await fetch(CONFIG.DATA.DONORS);
-      if (!resp.ok) return null;
-      _donorData = await resp.json();
-      if (!_donorData.donors || _donorData.donors.length === 0) {
-        _donorData = null;
-      }
-      return _donorData;
-    } catch {
-      return null;
-    }
   }
 
   // ── Apartments ────────────────────────────────────────────────
@@ -147,48 +119,6 @@ const Store = (() => {
     )].sort();
   }
 
-  // ── Donors ────────────────────────────────────────────────────
-
-  function getDonorData() {
-    return _donorData;
-  }
-
-  function getDonorRecipients() {
-    if (!_donorData) return [];
-    const counts = {};
-    _donorData.donors.forEach((d) => {
-      const r = d.recipient || 'Unknown';
-      counts[r] = (counts[r] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({ name, count }));
-  }
-
-  function getDonorsByRecipient(recipient, searchQuery = '') {
-    if (!_donorData) return [];
-    const q = searchQuery.toLowerCase();
-    return _donorData.donors.filter((d) => {
-      if (d.recipient !== recipient) return false;
-      if (q && !(d.name || '').toLowerCase().includes(q)
-        && !(d.apartment || d.building || '').toLowerCase().includes(q)
-        && !(d.employer || '').toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }
-
-  function getDonorBuildingMap(recipient) {
-    if (!_donorData) return {};
-    const map = {};
-    _donorData.donors.forEach((d) => {
-      if (d.recipient !== recipient) return;
-      const apt = d.apartment || d.building || 'Unknown';
-      if (!map[apt]) map[apt] = [];
-      map[apt].push(d);
-    });
-    return map;
-  }
-
   // ── Sorting ───────────────────────────────────────────────────
 
   function getSort() {
@@ -240,18 +170,6 @@ const Store = (() => {
     });
   }
 
-  function _queryDonors() {
-    const results = _db.exec('SELECT * FROM donors ORDER BY total_amount DESC');
-    if (!results.length) return [];
-    const cols = results[0].columns;
-    return results[0].values.map((row) => {
-      const obj = {};
-      cols.forEach((c, i) => { obj[c] = row[i]; });
-      obj.in_va7 = obj.in_va7 !== 0;
-      return obj;
-    });
-  }
-
   // ── Private: Status Restore ───────────────────────────────────
 
   function _restoreStatuses() {
@@ -293,9 +211,8 @@ const Store = (() => {
   // ── Public API ────────────────────────────────────────────────
 
   return {
-    loadAll, loadDonors, query,
+    loadAll, query,
     getApartments, getFilteredApartments, updateStatus, getStats, getUniqueAreas,
-    getDonorData, getDonorRecipients, getDonorsByRecipient, getDonorBuildingMap,
     getSort, toggleSort, sortArray,
   };
 })();

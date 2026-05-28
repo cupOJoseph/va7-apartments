@@ -81,15 +81,16 @@ jobs:
             console.log('✅ apartments.json valid (' + data.length + ' entries)');
           "
 
-      - name: Validate va7-boundary.geojson
+      - name: Validate va8-boundary.geojson
         run: |
-          if [ ! -f data/va7-boundary.geojson ]; then
-            echo "❌ data/va7-boundary.geojson not found"
+          if [ ! -f data/va8-boundary.geojson ]; then
+            echo "❌ data/va8-boundary.geojson not found"
             exit 1
           fi
           
           node -e "
-            const data = require('./data/va7-boundary.geojson');
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('./data/va8-boundary.geojson', 'utf8'));
             if (data.type !== 'FeatureCollection') {
               console.error('❌ Not a FeatureCollection');
               process.exit(1);
@@ -105,7 +106,7 @@ jobs:
             }
             console.log('District:', feat.properties.NAME);
             console.log('Geometry type:', feat.geometry.type);
-            console.log('✅ va7-boundary.geojson valid');
+            console.log('✅ va8-boundary.geojson valid');
           "
 
       - name: Check CDN URLs are reachable
@@ -130,7 +131,7 @@ jobs:
           echo "=== File sizes ==="
           du -sh index.html
           du -sh data/apartments.json
-          du -sh data/va7-boundary.geojson
+          du -sh data/va8-boundary.geojson
           
           # Warn if apartments.json is suspiciously small
           size=$(wc -c < data/apartments.json)

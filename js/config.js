@@ -1,5 +1,5 @@
 /**
- * VA-7 Apartment Dashboard — Configuration & Constants
+ * District 8 Apartments — Configuration & Constants
  */
 
 'use strict';
@@ -28,8 +28,6 @@ const CONFIG = Object.freeze({
     'Declined': '#fc8181',
   },
 
-  // Donor highlight color
-  DONOR_HIGHLIGHT_COLOR: '#d69e2e',
   OUT_OF_DISTRICT_COLOR: '#9b2c2c',
 
   // All valid statuses (order matters for dropdowns)
@@ -37,14 +35,13 @@ const CONFIG = Object.freeze({
 
   // Data paths
   DATA: {
-    DATABASE: 'data/va7.db',
+    DATABASE: 'data/va8.db',
     APARTMENTS: 'data/apartments.json',
-    BOUNDARY: 'data/va7-boundary.geojson',
-    DONORS: 'data/donors.json',
+    BOUNDARY: 'data/va8-boundary.geojson',
   },
 
   // Local storage keys
-  STORAGE_KEY: 'va7-apt-statuses',
+  STORAGE_KEY: 'district8-apt-statuses',
 
   // SQL.js CDN
   SQLJS_CDN: 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3',

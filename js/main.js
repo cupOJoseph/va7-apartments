@@ -1,5 +1,5 @@
 /**
- * VA-7 Apartment Dashboard — Main Entry Point
+ * District 8 Apartments — Main Entry Point
  *
  * Orchestrates initialization and exposes global handlers.
  */
@@ -24,12 +24,6 @@ const App = (() => {
 
       document.getElementById('loading').classList.add('hidden');
 
-      // Load donor data (non-blocking)
-      const donorData = await Store.loadDonors();
-      if (donorData) {
-        Donors.init();
-        console.log(`✅ Loaded ${donorData.donors.length} donor records`);
-      }
     } catch (err) {
       console.error('Boot failed:', err);
       document.getElementById('loading').innerHTML = `
@@ -42,11 +36,7 @@ const App = (() => {
   function handleStatusChange(idx, newStatus) {
     Store.updateStatus(idx, newStatus);
 
-    if (Donors.getActiveRecipient()) {
-      Donors.applyFilter();
-    } else {
-      MapView.renderMarkers();
-    }
+    MapView.renderMarkers();
 
     TableView.render();
     _updateStats();
@@ -86,12 +76,6 @@ const App = (() => {
 function updateStatus(idx, val) { App.handleStatusChange(idx, val); }
 function resetFilters() { TableView.resetFilters(); }
 function exportCSV() { TableView.exportCSV(); }
-function exportResidentsCSV() { alert('Residents data not yet loaded.'); }
-function openDonorPanel() { Donors.openPanel(); }
-function closeDonorPanel() { Donors.closePanel(); }
-function clearDonorFilter() { Donors.clearFilter(); }
-function exportDonorCSV() { Donors.exportCSV(); }
-function searchDonorContacts() { Donors.searchContacts(); }
 
 
 // ── Boot ────────────────────────────────────────────────────────
