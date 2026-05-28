@@ -1,5 +1,5 @@
 /**
- * VA-7 Apartment Dashboard — Utility Functions
+ * District 8 Apartments — Utility Functions
  */
 
 'use strict';

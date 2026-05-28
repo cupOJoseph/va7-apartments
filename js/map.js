@@ -1,5 +1,5 @@
 /**
- * VA-7 Apartment Dashboard — Map Module
+ * District 8 Apartments — Map Module
  */
 
 'use strict';
@@ -60,40 +60,6 @@ const MapView = (() => {
       });
 
       marker.bindPopup(_buildPopup(apt, idx));
-      _clusterGroup.addLayer(marker);
-    });
-  }
-
-  function renderDonorMarkers(recipient, donorBuildingMap, onStatusChange) {
-    _clusterGroup.clearLayers();
-    const apartments = Store.getApartments();
-    const matchedNames = new Set(Object.keys(donorBuildingMap));
-
-    apartments.forEach((apt, idx) => {
-      if (!apt.lat || !apt.lng) return;
-      if (apt.in_district === false || apt.in_district === 0) return;
-
-      const isDonor = matchedNames.has(apt.name);
-      const color = isDonor ? CONFIG.DONOR_HIGHLIGHT_COLOR : (CONFIG.STATUS_COLORS[apt.status] || '#a0aec0');
-      const size = isDonor ? 18 : 12;
-      const animate = isDonor;
-
-      const marker = L.marker([apt.lat, apt.lng], {
-        icon: _createMarkerIcon(color, size, animate),
-      });
-
-      const donorCount = donorBuildingMap[apt.name]?.length || 0;
-      const donorInfo = isDonor
-        ? `<div class="popup-detail" style="color:${CONFIG.DONOR_HIGHLIGHT_COLOR};font-weight:700;margin-top:6px">🎯 ${donorCount} donor${donorCount !== 1 ? 's' : ''} to ${esc(recipient)}</div>`
-        : '';
-
-      marker.bindPopup(`
-        <div class="popup-title">${esc(apt.name)}</div>
-        <div class="popup-detail"><strong>Address:</strong> ${esc(apt.address)}</div>
-        <div class="popup-detail"><strong>Est. Units:</strong> ${esc(apt.est_units) || 'Unknown'}</div>
-        ${donorInfo}
-      `);
-
       _clusterGroup.addLayer(marker);
     });
   }
@@ -162,5 +128,5 @@ const MapView = (() => {
     legend.addTo(_map);
   }
 
-  return { init, invalidateSize, renderMarkers, renderDonorMarkers };
+  return { init, invalidateSize, renderMarkers };
 })();

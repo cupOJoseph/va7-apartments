@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VA-7 Apartment Dashboard — Campaign Canvassing Tool</title>
+    <title>District 8 Apartments</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
     <!-- Leaflet MarkerCluster CSS -->
@@ -15,14 +15,14 @@
     <!-- Loading -->
     <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p>Loading VA-7 Apartment Dashboard...</p>
+        <p>Loading District 8 Apartments...</p>
     </div>
 
     <!-- Header -->
     <div class="header">
         <div>
-            <h1>🏢 VA-7 Apartment Dashboard <span class="verified-badge">✓ Verified</span></h1>
-            <div class="subtitle">Campaign Canvassing Tool — New Virginia 7th District</div>
+            <h1>🏢 District 8 Apartments <span class="verified-badge">✓ Verified</span></h1>
+            <div class="subtitle">Current Virginia 8th Congressional District apartment map</div>
         </div>
         <div class="header-stats">
             <div class="header-stat">
@@ -48,55 +48,10 @@
         </div>
     </div>
 
-    <!-- Donor Filter Bar -->
-    <div class="donor-filter-bar" id="donor-filter-bar" style="display:none">
-        <label>🎯 Donor Filter:</label>
-        <select id="donor-recipient-filter">
-            <option value="">Select a recipient...</option>
-        </select>
-        <input type="text" id="donor-search" placeholder="Search donors by name..." style="min-width:180px">
-        <button class="btn btn-primary" onclick="openDonorPanel()" style="font-size:0.8rem;padding:6px 12px">
-            👥 View Donor List
-        </button>
-        <button class="btn btn-outline" onclick="clearDonorFilter()" style="font-size:0.8rem;padding:6px 12px">
-            ✕ Clear Filter
-        </button>
-        <span class="donor-count" id="donor-count-badge"></span>
-    </div>
-
     <!-- Tabs -->
     <div class="tabs">
         <div class="tab active" data-tab="map">🗺️ Map</div>
         <div class="tab" data-tab="list">📋 List <span class="count-badge" id="list-count"></span></div>
-        <div class="tab" data-tab="residents">👥 Residents</div>
-    </div>
-
-    <!-- Donor Side Panel -->
-    <div class="donor-panel-overlay" id="donor-overlay" onclick="closeDonorPanel()"></div>
-    <div class="donor-panel" id="donor-panel">
-        <div class="donor-panel-header">
-            <h3 id="donor-panel-title">Donors</h3>
-            <button class="donor-panel-close" onclick="closeDonorPanel()">×</button>
-        </div>
-        <div class="donor-panel-actions">
-            <button class="btn btn-primary" onclick="exportDonorCSV()">📥 Export CSV</button>
-            <button class="btn btn-warning" onclick="searchDonorContacts()">🔍 Search LinkedIn/Email/Phone</button>
-        </div>
-        <div class="donor-list" id="donor-list-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Building</th>
-                        <th>Employer</th>
-                        <th>Total $</th>
-                        <th># Gifts</th>
-                    </tr>
-                </thead>
-                <tbody id="donor-list-body"></tbody>
-            </table>
-        </div>
-        <div class="donor-panel-footer" id="donor-panel-footer"></div>
     </div>
 
     <!-- Map Tab -->
@@ -115,7 +70,6 @@
                 <select id="filter-region">
                     <option value="">All Regions</option>
                     <option value="NoVA">NoVA</option>
-                    <option value="Central VA">Central VA</option>
                 </select>
                 <select id="filter-type">
                     <option value="">All Types</option>
@@ -145,7 +99,6 @@
                             <th data-sort="region">Region <span class="sort-arrow">⇕</span></th>
                             <th data-sort="est_units">Units <span class="sort-arrow">⇕</span></th>
                             <th data-sort="type">Type <span class="sort-arrow">⇕</span></th>
-                            <th data-sort="community_room">Comm. Room</th>
                             <th data-sort="status">Status <span class="sort-arrow">⇕</span></th>
                             <th>Notes</th>
                             <th>Source</th>
@@ -153,57 +106,6 @@
                     </thead>
                     <tbody id="apt-table-body"></tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Residents Tab -->
-    <div class="tab-content" id="tab-residents">
-        <div class="residents-container">
-            <div class="controls">
-                <input type="text" id="resident-search" placeholder="Search residents by name, address, employer...">
-                <select id="resident-filter-apt">
-                    <option value="">All Apartments</option>
-                </select>
-                <select id="resident-filter-party">
-                    <option value="">All Parties</option>
-                    <option value="DEM">Democratic</option>
-                    <option value="REP">Republican</option>
-                    <option value="IND">Independent</option>
-                    <option value="OTH">Other</option>
-                </select>
-                <button class="btn btn-outline" onclick="exportResidentsCSV()">📥 Export CSV</button>
-            </div>
-            <div class="empty-state" id="residents-empty">
-                <h2>👥 Residents & FEC Data</h2>
-                <p>This tab will be populated with FEC individual contribution data. 
-                   Schema is ready: name, address, apartment, employer, occupation, 
-                   contribution amount/date, recipient, and FEC filing ID.</p>
-                <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">
-                    Database schema initialized with <code>residents</code> table linked to apartments via foreign key.
-                </p>
-            </div>
-            <div class="table-wrapper" id="residents-table-wrapper" style="display:none">
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-sort="name">Name</th>
-                            <th data-sort="address">Address</th>
-                            <th data-sort="apartment">Apartment</th>
-                            <th data-sort="employer">Employer</th>
-                            <th data-sort="occupation">Occupation</th>
-                            <th data-sort="contribution_amount">Amount</th>
-                            <th data-sort="contribution_date">Date</th>
-                            <th data-sort="recipient">Recipient</th>
-                            <th data-sort="party">Party</th>
-                        </tr>
-                    </thead>
-                    <tbody id="residents-table-body"></tbody>
-                </table>
-            </div>
-            <div id="residents-summary" style="display:none; margin-top:20px; padding:16px; background:var(--card-bg); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1)">
-                <h3 style="margin-bottom:12px">📊 Contribution Summary</h3>
-                <div id="summary-content"></div>
             </div>
         </div>
     </div>
@@ -219,7 +121,6 @@
     <script src="js/store.js"></script>
     <script src="js/map.js"></script>
     <script src="js/table.js"></script>
-    <script src="js/donors.js"></script>
     <script src="js/main.js"></script>
     <script>/* LEGACY REMOVED — all JS moved to js/ modules */</script>
 </body>

@@ -1,31 +1,28 @@
-# VA-7 Apartment Dashboard
+# District 8 Apartments
 
-Campaign canvassing tool for Virginia's new 7th Congressional District.
+Apartment map and sortable building list for Virginia's current 8th Congressional District.
 
 ## Features
 
-- **🗺️ Map** — Interactive Leaflet map with clustered markers, VA-7 district boundary overlay, color-coded by canvassing status
-- **📋 List** — Sortable, filterable table of all apartment complexes with inline status updates, search, and CSV export
-- **👥 Residents** — FEC contribution data tab (schema ready, awaiting data import)
+- **🗺️ Map** — Interactive Leaflet map with clustered markers and current VA-8 district boundary overlay
+- **📋 List** — Sortable, filterable table of apartment buildings with search and CSV export
 
 ## Tech Stack
 
 - Single-page app, no build step required
 - [Leaflet.js](https://leafletjs.com/) + [MarkerCluster](https://github.com/Leaflet/Leaflet.markercluster) for mapping
 - [sql.js](https://sql.js.org/) (WASM SQLite) for in-browser database
-- District boundary from official proposed redistricting GeoJSON
+- District boundary from the current U.S. Census/TIGER congressional district geometry
 - Status persistence via localStorage
 
 ## Data
 
-- `data/apartments.json` — 300+ apartment complexes with geocoded coordinates
-- `data/va7-boundary.geojson` — VA-7 district boundary polygon
+- `data/apartments.json` — apartment buildings inside VA-8 with source metadata and estimated unit counts
+- `data/va8-boundary.geojson` — current VA-8 district boundary polygon
 
 ## District Coverage
 
-**Northern Virginia:** Arlington (Ballston, Rosslyn, Clarendon, Cherrydale, East Falls Church), Falls Church City, Fairfax County (Springfield, Annandale, Burke, Seven Corners, Woodburn, Lake Barcroft, Kings Park, Ravensworth, Dunn Loring)
-
-**Central Virginia:** Culpeper, Orange, Louisa, Madison, Greene, Goochland, Powhatan, Rockingham (partial), Augusta (partial)
+Current VA-8 portions of Arlington, Alexandria, Falls Church City, and adjacent Fairfax County areas.
 
 ## Development
 

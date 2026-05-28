@@ -1,4 +1,4 @@
-/* VA-7 Apartment Dashboard — Styles */
+/* District 8 Apartments — Styles */
 
 :root {
             --primary: #1a365d;
@@ -211,15 +211,6 @@
         .status-canvassed { background: #c6f6d5; color: #276749; }
         .status-declined { background: #fed7d7; color: #9b2c2c; }
         .status-out { background: #fff5f5; color: #9b2c2c; border: 1px dashed #fc8181; }
-        /* Residents tab */
-        .residents-container { padding: 16px; }
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-        }
-        .empty-state h2 { font-size: 1.5rem; margin-bottom: 10px; color: var(--text); }
-        .empty-state p { max-width: 500px; margin: 0 auto; line-height: 1.6; }
         /* Popup */
         .leaflet-popup-content { min-width: 250px; }
         .popup-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
@@ -263,68 +254,6 @@
             z-index: 9999;
         }
         .loading.hidden { display: none; }
-        /* Donor Filter Panel */
-        .donor-filter-bar {
-            background: #edf2f7;
-            padding: 10px 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-        }
-        .donor-filter-bar label { font-weight: 600; font-size: 0.85rem; color: var(--primary); white-space: nowrap; }
-        .donor-filter-bar select, .donor-filter-bar input {
-            padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;
-        }
-        .donor-filter-bar .donor-count {
-            font-size: 0.85rem; color: var(--text-muted); margin-left: auto;
-        }
-        /* Donor Side Panel */
-        .donor-panel {
-            position: fixed; top: 0; right: -420px; width: 420px; height: 100vh;
-            background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-            z-index: 2000; transition: right 0.3s ease; display: flex; flex-direction: column;
-        }
-        .donor-panel.open { right: 0; }
-        .donor-panel-header {
-            padding: 16px 20px; background: var(--primary); color: white;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .donor-panel-header h3 { font-size: 1rem; }
-        .donor-panel-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-        .donor-panel-actions {
-            padding: 12px 20px; border-bottom: 1px solid var(--border);
-            display: flex; gap: 8px; flex-wrap: wrap;
-        }
-        .donor-panel-actions .btn { font-size: 0.8rem; padding: 6px 12px; }
-        .btn-warning { background: #d69e2e; color: white; }
-        .btn-warning:hover { background: #b7791f; }
-        .donor-list {
-            flex: 1; overflow-y: auto; padding: 0;
-        }
-        .donor-list table { font-size: 0.8rem; width: 100%; }
-        .donor-list th { position: sticky; top: 0; font-size: 0.75rem; padding: 8px 10px; }
-        .donor-list td { padding: 6px 10px; font-size: 0.8rem; }
-        .donor-panel-footer {
-            padding: 12px 20px; border-top: 1px solid var(--border);
-            font-size: 0.8rem; color: var(--text-muted); text-align: center;
-        }
-        .donor-panel-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.3); z-index: 1999;
-        }
-        .donor-panel-overlay.open { display: block; }
-        /* Donor highlight on map */
-        .donor-building-highlight {
-            border: 3px solid #d69e2e !important;
-            background: #d69e2e !important;
-            animation: donor-pulse 1.5s infinite;
-        }
-        @keyframes donor-pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(214,158,46,0.5); }
-            50% { box-shadow: 0 0 0 10px rgba(214,158,46,0); }
-        }
         .spinner {
             width: 48px;
             height: 48px;
